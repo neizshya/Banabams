@@ -8,21 +8,23 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Cart from "./pages/Cart";
 import Login from "./pages/login";
-import Account from "./pages/account";
+import Account from "./pages/account/account";
 import Header from "./components/Header";
+import Notification from "./pages/notif";
 function App() {
   return (
     <>
       {/* <div className="text-center">
         <img src={loader} alt="" />
       </div> */}
-      <Header />
       <BrowserRouter>
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/notification" element={<Notification />} />
         </Routes>
       </BrowserRouter>
     </>

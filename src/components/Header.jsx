@@ -2,6 +2,7 @@ import logo from "../assets/logobana.svg";
 import cart from "../assets/cart.svg";
 import user from "../assets/user.svg";
 import notif from "../assets/notif.svg";
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -13,11 +14,9 @@ const Header = () => {
               <div className="row">
                 <div className="col-1">
                   <li className="nav-item">
-                    <a
-                      href="/"
-                      className="d-flex align-items-center  text-white text-decoration-none">
+                    <NavLink to={"/"} className="d-flex align-items-center">
                       <img className="w-75" src={logo} alt="" />
-                    </a>
+                    </NavLink>
                   </li>
                 </div>
                 <div className="col-1">
@@ -40,23 +39,27 @@ const Header = () => {
               <div className="row ">
                 <div className="col-4">
                   <li className="nav-item">
-                    <a href="/" className="d-flex align-items-center">
+                    <NavLink
+                      to={"/notification"}
+                      className="d-flex align-items-center">
                       <img width={"62%"} src={notif} alt="" />
-                    </a>
+                    </NavLink>
                   </li>
                 </div>
                 <div className="col-4">
                   <li className="nav-item">
-                    <a href="/" className="d-flex align-items-center">
+                    <NavLink to={"/cart"} className="d-flex align-items-center">
                       <img width={"75%"} src={cart} alt="" />
-                    </a>
+                    </NavLink>
                   </li>
                 </div>
                 <div className="col-4">
                   <li className="nav-item">
-                    <a href="/" className="d-flex align-items-center ">
+                    <NavLink
+                      to={"/account"}
+                      className="d-flex align-items-center">
                       <img width={"75%"} src={user} alt="" />
-                    </a>
+                    </NavLink>
                   </li>
                 </div>
               </div>
