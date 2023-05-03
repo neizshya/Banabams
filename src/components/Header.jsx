@@ -3,8 +3,19 @@ import cart from "../assets/cart.svg";
 import user from "../assets/user.svg";
 import notif from "../assets/notif.svg";
 import { NavLink } from "react-router-dom";
-
+import { useState } from "react";
+import { useModal } from "react-modal-hook";
+import ReactModal from "react-modal";
 const Header = () => {
+  const [showModal, hideModal] = useModal(() => (
+    <ReactModal isOpen>
+      <p>Modal content</p>
+    </ReactModal>
+  ));
+  ReactModal.setAppElement("*");
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <>
       <header className="px-1 pt-2 shadow sticky-top bg-white">
@@ -42,24 +53,52 @@ const Header = () => {
                     <NavLink
                       to={"/notification"}
                       className="d-flex align-items-center">
-                      <img width={"62%"} src={notif} alt="" />
+                      <img
+                        width={"62%"}
+                        src={notif}
+                        alt=""
+                        onMouseOver={showModal}
+                        onMouseOut={hideModal}
+                      />
                     </NavLink>
                   </li>
                 </div>
                 <div className="col-4">
                   <li className="nav-item">
                     <NavLink to={"/cart"} className="d-flex align-items-center">
-                      <img width={"75%"} src={cart} alt="" />
+                      <img
+                        width={"75%"}
+                        src={cart}
+                        alt=""
+                        onMouseOver={showModal}
+                        onMouseOut={hideModal}
+                      />
                     </NavLink>
                   </li>
                 </div>
                 <div className="col-4">
                   <li className="nav-item">
-                    <NavLink
-                      to={"/account"}
-                      className="d-flex align-items-center">
-                      <img width={"75%"} src={user} alt="" />
-                    </NavLink>
+                    {isLoggedIn ? (
+                      <NavLink
+                        to={"/account"}
+                        className="d-flex align-items-center">
+                        <img
+                          width={"75%"}
+                          src={user}
+                          alt=""
+                          onMouseOver={showModal}
+                          onMouseOut={hideModal}
+                        />
+                      </NavLink>
+                    ) : (
+                      <button
+                        className="btn btn-warning"
+                        onClick={() => {
+                          setIsLoggedIn(true);
+                        }}>
+                        Login
+                      </button>
+                    )}
                   </li>
                 </div>
               </div>

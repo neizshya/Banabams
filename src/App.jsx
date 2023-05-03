@@ -6,26 +6,30 @@ import { Alert } from "bootstrap";
 import loader from "./assets/banana.gif";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import Cart from "./pages/Cart";
-import Login from "./pages/login";
+import Cart from "./pages/Cart/Cart";
+
 import Account from "./pages/account/account";
 import Header from "./components/Header";
 import Notification from "./pages/notif";
+import Footer from "./components/Footer";
+
 function App() {
   return (
     <>
       {/* <div className="text-center">
         <img src={loader} alt="" />
       </div> */}
+
       <BrowserRouter>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
+
           <Route path="/account" element={<Account />} />
           <Route path="/notification" element={<Notification />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );

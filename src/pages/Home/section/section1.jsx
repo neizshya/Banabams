@@ -4,7 +4,7 @@ const Section1 = () => {
     <>
       <div className="row">
         <div className="col-9 mt-5">
-          <div className="row mx-5 px-5 mt-5 ">
+          <div className="row mt-5 ">
             <div className="col-12 mt-5">
               <h1
                 className="fw-bold"
@@ -15,7 +15,7 @@ const Section1 = () => {
             <div className="col-12">
               <h2 style={{ fontSize: "3vw" }}>PISANG CRUNCHY KEKINIAN</h2>
             </div>
-            <div className=" mt-3 col-10 text-secondary">
+            <div className="mt-3 col-10 text-secondary">
               <p style={{ fontSize: "2vw" }}>
                 Banabams adalah kedai jajanan pisang cruchy kekinian yang
                 terletak di Megu, Kabupaten Cirebon.
