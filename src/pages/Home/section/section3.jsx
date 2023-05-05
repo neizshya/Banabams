@@ -70,9 +70,11 @@ const Section3 = () => {
   );
   return (
     <>
-      <p className="fs-1">Kontak Kami</p>
+      <div id="#kontak">
+        <p className="fs-1">Kontak Kami</p>
 
-      {isLoading ? generalview : <Loading />}
+        {isLoading ? generalview : <Loading />}
+      </div>
     </>
   );
 };
