@@ -2,10 +2,27 @@ import { useState } from "react";
 import icon from "../../assets/arrowlocation.svg";
 import Footer from "../../components/Footer";
 import { Button, Card } from "react-bootstrap";
-import CartCard from "../../components/CartCard";
+import Cards from "../../components/CartCard";
 import { useContext } from "react";
 import { UserContext } from "../../context/Context";
+import choco from "../../assets/menu/choco.svg";
+import trash from "../../assets/trash.svg";
+import plus from "../../assets/plus.svg";
+import minus from "../../assets/minus.svg";
+import { useNavigate } from "react-router-dom";
 const Cart = () => {
+  const initialstate = {
+    actualprice: 0,
+    img: "",
+    isMenuAdded: false,
+    isMenuChecked: true,
+    menu: "",
+    price: "",
+    quantity: 1,
+    taste: "",
+    topping: "",
+    totalPrice: 0,
+  };
   const [delivery, setDelivery] = useState(false);
   const {
     menu,
@@ -16,7 +33,82 @@ const Cart = () => {
     Fetchmenu,
     quantity,
     setQuantity,
+    totalChoosen,
+    history,
+    setHistory,
+    setTotalChoosen,
+    totalChoosenMenu,
+    setTotalChoosenMenu,
   } = useContext(UserContext);
+  const navigate = useNavigate();
+  const leftsided = (
+    <>
+      <div className="col-1">
+        <button
+          className="btn mt-3 "
+          style={{ marginLeft: "-2vw" }}
+          onClick={() => {
+            setTotalChoosen({
+              isMenuAdded: false,
+            });
+          }}>
+          <img src={trash} style={{ width: "2.5vw" }} />
+        </button>
+      </div>
+      <div className="col-3 pt-2">
+        <div
+          className="border rounded-3 mt-3"
+          style={{
+            backgroundColor: "#FEF7CB",
+            width: "10vw",
+            height: "2.5vw",
+          }}>
+          <div className="row ">
+            <div className="col-4">
+              <button
+                className="btn"
+                onClick={() => {
+                  if (quantity > 0) {
+                    setQuantity(quantity - 1);
+                  }
+
+                  // console.log(total - 1);
+                  // setQuantity(quantity - 1);
+                }}>
+                <img src={minus} alt="" />
+              </button>
+            </div>
+            <div className="col-4 ">
+              <p className="fs-5 fw-semibold mt-1 ms-2">
+                {/* {total} */}
+                {quantity}
+              </p>
+            </div>
+            <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
+              <button
+                className="btn"
+                onClick={() => {
+                  setQuantity(quantity + 1);
+
+                  // setQuantity(quantity + 1);
+                }}>
+                <img src={plus} alt="" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+  const handleOnclick = () => {
+    setHistory(totalChoosenMenu);
+    // setTotalChoosen({
+    //   isMenuAdded: false,
+    // });
+    setTotalChoosenMenu([initialstate]);
+    navigate("/account/transaction");
+  };
+  console.log(history);
   // const Increase = () => {
   //   setQuantity(quantity + 1);
   // };
@@ -99,34 +191,69 @@ const Cart = () => {
             <div className="row ms-1 mb-3">
               <div className="col-6 ">
                 <div className="row">
-                  <div className="col-1 mt-1 me-3">
-                    <input
-                      type="checkbox"
-                      name="pilih"
-                      id="pilih"
-                      style={{ transform: "scale(2)" }}
-                    />
-                  </div>
-                  <div className="col-7 ">
-                    <CartCard setTotal={setQuantity} total={quantity} />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row ms-1">
-              <div className="col-6 ">
-                <div className="row">
-                  <div className="col-1 mt-1 me-3">
-                    <input
-                      type="checkbox"
-                      name="pilih"
-                      id="pilih"
-                      style={{ transform: "scale(2)" }}
-                    />
-                  </div>
-                  <div className="col-7 ">
-                    <CartCard setTotal={setQuantity} total={quantity} />
-                  </div>
+                  {/* {totalChoosen.isMenuAdded ? (
+                    <>
+                      <div className="col-1 mt-1 me-3">
+                        <input
+                          type="checkbox"
+                          name="pilih"
+                          id="pilih"
+                          checked={totalChoosen.isMenuChecked}
+                          style={{ transform: "scale(2)" }}
+                        />
+                      </div>
+                      <div className="col-7 ">
+                        <Cards
+                          width={"45vw"}
+                          leftSide={leftsided}
+                          price={` ${totalChoosen.quantity} x Rp ${totalChoosen.actualprice}`}
+                          img={totalChoosen.img}
+                          menuName={`${totalChoosen.taste} (${totalChoosen.topping})`}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="col-12 ">
+                      <p className=" fs-3">anda belum memasukan menu</p>
+                    </div>
+                  )} */}
+                  {totalChoosenMenu[0]?.isMenuAdded ? (
+                    <>
+                      <div className="row">
+                        {totalChoosenMenu.map((e, index) => (
+                          <>
+                            <div className="row mb-3">
+                              <div className="col-1 mt-1 me-3">
+                                <input
+                                  type="checkbox"
+                                  name="pilih"
+                                  id="pilih"
+                                  checked={e.isMenuChecked}
+                                  onClick={(e) => {}}
+                                  style={{ transform: "scale(2)" }}
+                                />
+                              </div>
+                              <div className="col-7 ">
+                                <Cards
+                                  width={"45vw"}
+                                  leftSide={leftsided}
+                                  price={`${e.quantity} x Rp ${e.actualprice}`}
+                                  img={e.img}
+                                  menuName={`${e.taste} (${e.topping})`}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="col-12 ">
+                        <p className=" fs-3">anda belum memasukan menu</p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -150,7 +277,9 @@ const Cart = () => {
                   </div>
                 </div>
                 <div className="col-12 mt-4">
-                  <p className="fs-5">Total Harga ()</p>
+                  <p className="fs-5">
+                    Total Harga ({totalChoosen.totalPrice})
+                  </p>
                 </div>
                 <div className="col-12 mt-5"></div>
                 <div className="col-12 mt-5"></div>
@@ -174,12 +303,15 @@ const Cart = () => {
                       <p className="fs-5 fw-semibold">Total Harga ()</p>
                     </div>
                     <div className="col-6 text-end">
-                      <p className="fs-5 fw-semibold">Rp 0</p>
+                      <p className="fs-5 fw-semibold">
+                        Rp {totalChoosen.totalPrice}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="col-12 ">
                   <button
+                    onClick={handleOnclick}
                     className="btn btn-warning w-75 ms-5"
                     style={{ border: "1.5px solid brown" }}>
                     Bayar Sekarang
