@@ -38,7 +38,12 @@ const Section2 = () => {
     totalChoosenMenu,
     setTotalChoosenMenu,
   } = useContext(UserContext);
-
+  const initialstateChoosemenu = {
+    menu: "",
+    img: "",
+    taste: "",
+    price: "",
+  };
   const [totalPriceWithMenu, setTotalPriceWithMenu] = useState(0);
   const [choosenMenu, setChoosenMenu] = useState({});
   const [choosenTopping, setchoosenTopping] = useState({});
@@ -210,6 +215,8 @@ const Section2 = () => {
       {isLoading ? <Loading /> : TestiView}
 
       {/* modal */}
+
+      {/* modal */}
       <ReactModal
         isOpen={modalShow}
         onRequestClose={() => setModalShow(false)}
@@ -236,6 +243,7 @@ const Section2 = () => {
               onClick={() => {
                 setModalShow(false);
                 // setChoosenMenu(initialstateChoosemenu);
+                setQuantity(0);
                 setQuantity(0);
               }}>
               <img src={cancel} alt="" />
@@ -304,6 +312,8 @@ const Section2 = () => {
                 <div className="col-4">
                   <button className="btn" onClick={decrement}>
                     <img src={minus} alt="" />
+                  <button className="btn" onClick={decrement}>
+                    <img src={minus} alt="" />
                   </button>
                 </div>
                 <div className="col-4 ">
@@ -313,6 +323,8 @@ const Section2 = () => {
                   </p>
                 </div>
                 <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
+                  <button className="btn" onClick={increment}>
+                    <img src={plus} alt="" />
                   <button className="btn" onClick={increment}>
                     <img src={plus} alt="" />
                   </button>

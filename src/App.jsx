@@ -25,6 +25,11 @@ import Address from "./pages/account/section/Address";
 import Transaction from "./pages/account/section/Transaction";
 import Payment from "./pages/account/section/Payment";
 import { setUserId } from "firebase/analytics";
+import Biodata from "./pages/account/section/Biodata";
+import Address from "./pages/account/section/Address";
+import Transaction from "./pages/account/section/Transaction";
+import Payment from "./pages/account/section/Payment";
+import { setUserId } from "firebase/analytics";
 function App() {
   const [menu, setMenu] = useState([]);
   const [topping, setTopping] = useState([]);
@@ -48,6 +53,14 @@ function App() {
   const [history, setHistory] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [userid, setUserId] = useState("");
+  const [biodata, setBiodata] = useState({
+    id: "",
+  });
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
@@ -109,6 +122,10 @@ function App() {
     Fetchtopping(), Fetchmenu(), Fetchtesti();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setName(currentUser.displayName);
+      const tempProvider = [];
+      tempProvider.push(currentUser.providerData[0]);
+      setUserId(tempProvider[0]?.uid);
       setName(currentUser.displayName);
       const tempProvider = [];
       tempProvider.push(currentUser.providerData[0]);
