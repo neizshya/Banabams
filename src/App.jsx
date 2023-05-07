@@ -20,17 +20,29 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebase/config";
 import PrivateRoute from "./components/privateRoute";
+import Biodata from "./pages/account/section/Biodata";
+import Address from "./pages/account/section/Address";
+import Transaction from "./pages/account/section/Transaction";
+import Payment from "./pages/account/section/Payment";
+import { setUserId } from "firebase/analytics";
 function App() {
   const [menu, setMenu] = useState([]);
   const [topping, setTopping] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [user, setUser] = useState({});
   const [choosenItem, setChoosenItem] = useState({});
-  const [totalChoosen, setTotalChoosen] = useState([]);
+  const [totalChoosen, setTotalChoosen] = useState({});
+  const [history, setHistory] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const [quantity, setQuantity] = useState(0);
-
+  const [quantity, setQuantity] = useState(1);
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [userid, setUserId] = useState("");
+  const [biodata, setBiodata] = useState({
+    id: "",
+  });
   const Fetchtopping = useCallback(async () => {
     setLoading(true);
     await MockAPI.get("/listtopping")
@@ -84,12 +96,15 @@ function App() {
     Fetchtopping(), Fetchmenu(), Fetchtesti();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setName(currentUser.displayName);
+      const tempProvider = [];
+      tempProvider.push(currentUser.providerData[0]);
+      setUserId(tempProvider[0]?.uid);
     });
     return () => {
       unsubscribe();
     };
   }, []);
-
   return (
     <>
       {/* <div className="text-center">
@@ -119,6 +134,15 @@ function App() {
           GoogleSignIn,
           logOut,
           user,
+          name,
+          setName,
+          date,
+          setDate,
+          phone,
+          setPhone,
+          userid,
+          history,
+          setHistory,
         }}>
         <BrowserRouter>
           <Header />
@@ -126,7 +150,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/account" element={<Account />} />
+              <Route path="/account" element={<Account />}>
+                <Route path="/account/biodata" element={<Biodata />} />
+                <Route path="/account/address" element={<Address />} />
+                <Route path="/account/transaction" element={<Transaction />} />
+                <Route path="/account/payment" element={<Payment />} />
+              </Route>
             </Route>
           </Routes>
           <Footer />

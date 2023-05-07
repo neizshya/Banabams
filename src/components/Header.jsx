@@ -85,17 +85,12 @@ const Header = () => {
               <div className="row ">
                 <div className="col-4">
                   <li className="nav-item">
-                    <NavLink
-                      to={"/notification"}
-                      className="d-flex align-items-center">
-                      <img
-                        width={"62%"}
-                        src={notif}
-                        alt=""
-                        onMouseOver={showModal}
-                        onMouseOut={hideModal}
-                      />
-                    </NavLink>
+                    <img
+                      width={"62%"}
+                      src={notif}
+                      alt=""
+                      onMouseOver={showModal}
+                    />
                   </li>
                 </div>
                 <div className="col-4">
@@ -110,16 +105,15 @@ const Header = () => {
                 </div>
                 <div className="col-4">
                   <li className="nav-item">
-                    {user?.displayName ? (
+                    {user ? (
                       <NavLink
-                        to={"/account"}
+                        to={"/account/biodata"}
                         className="d-flex align-items-center">
                         <img
                           width={"75%"}
                           src={users}
                           alt=""
                           onMouseOver={showModal}
-                          onMouseOut={hideModal}
                         />
                       </NavLink>
                     ) : (

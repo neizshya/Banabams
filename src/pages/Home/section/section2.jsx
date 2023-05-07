@@ -19,7 +19,10 @@ import minus from "../../../assets/minus.svg";
 const Section2 = () => {
   const [modalShow, setModalShow] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [totalPrices, setTotalPrices] = useState(0);
+  const [totalPrices, setTotalPrices] = useState({
+    total: 0,
+    topping: "",
+  });
   const {
     menu,
     setMenu,
@@ -32,15 +35,14 @@ const Section2 = () => {
     setQuantity,
     totalChoosen,
     setTotalChoosen,
-    // choosenItem,
-    // setChoosenItem,
   } = useContext(UserContext);
-  // const initialstateChoosemenu = {
-  //   menu: "",
-  //   img: "",
-  //   taste: "",
-  //   price: "",
-  // };
+  const initialstateChoosemenu = {
+    menu: "",
+    img: "",
+    taste: "",
+    price: "",
+  };
+  const [totalPriceWithMenu, setTotalPriceWithMenu] = useState(0);
   const [choosenMenu, setChoosenMenu] = useState({});
   const [choosenTopping, setchoosenTopping] = useState({});
   const customStyles = {
@@ -75,9 +77,32 @@ const Section2 = () => {
       },
       0
     );
-    setTotalPrices(totalPrice);
+    setTotalPrices({ total: totalPrice, topping: topping[position] });
   };
-
+  const increment = () => {
+    setQuantity(quantity + 1);
+  };
+  const decrement = () => {
+    if (quantity > 0) {
+      setQuantity(quantity - 1);
+    }
+  };
+  const handleClickModal = (e) => {
+    // console.log({
+    //   ...choosenMenu,
+    //   quantity: quantity,
+    //   // topping:
+    //   totalPrice: (totalPrices + parseInt(choosenMenu.price)) * quantity,
+    // });
+    setTotalChoosen({
+      ...choosenMenu,
+      quantity: quantity,
+      topping: totalPrices.topping.taste,
+      totalPrice: (totalPrices.total + parseInt(choosenMenu.price)) * quantity,
+      actualprice: totalPrices.total + parseInt(choosenMenu.price),
+    });
+    setModalShow(!modalShow);
+  };
   const toppingView = (
     <>
       {topping.map((item) => (
@@ -196,6 +221,8 @@ const Section2 = () => {
       <div className="row mb-3">{isLoading ? <Loading /> : toppingView}</div>
       <p className="fs-1">Testimoni</p>
       {isLoading ? <Loading /> : TestiView}
+
+      {/* modal */}
       <ReactModal
         isOpen={modalShow}
         onRequestClose={() => setModalShow(false)}
@@ -222,6 +249,7 @@ const Section2 = () => {
               onClick={() => {
                 setModalShow(false);
                 // setChoosenMenu(initialstateChoosemenu);
+                setQuantity(0);
               }}>
               <img src={cancel} alt="" />
             </button>
@@ -232,7 +260,6 @@ const Section2 = () => {
           <div className="col-8 ">
             {/* topping checkbox */}
             <div className="row">
-              {console.log(topping)}
               {topping.map((item, index) => (
                 <div className="col-6 mt-3">
                   <div className="row">
@@ -288,16 +315,8 @@ const Section2 = () => {
               }}>
               <div className="row ">
                 <div className="col-4">
-                  <button className="btn">
-                    <img
-                      src={minus}
-                      alt=""
-                      onClick={() => {
-                        setQuantity(quantity - 1);
-                        // console.log(total - 1);
-                        // setQuantity(quantity - 1);
-                      }}
-                    />
+                  <button className="btn" onClick={decrement}>
+                    <img src={minus} alt="" />
                   </button>
                 </div>
                 <div className="col-4 ">
@@ -307,15 +326,8 @@ const Section2 = () => {
                   </p>
                 </div>
                 <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
-                  <button className="btn">
-                    <img
-                      src={plus}
-                      alt=""
-                      onClick={() => {
-                        setQuantity(quantity + 1);
-                        // setQuantity(quantity + 1);
-                      }}
-                    />
+                  <button className="btn" onClick={increment}>
+                    <img src={plus} alt="" />
                   </button>
                 </div>
               </div>
@@ -326,12 +338,12 @@ const Section2 = () => {
           </div>
           <div className="col-5 mt-1">
             <p className="fs-4 fw-medium">
-              Rp {totalPrices + parseInt(choosenMenu.price)}
-              {console.log(totalPrices)}
+              Rp {(totalPrices.total + parseInt(choosenMenu.price)) * quantity}
             </p>
           </div>
           <div className="col-12 ">
             <button
+              onClick={handleClickModal}
               className="btn w-75 bg-white  "
               style={{ border: "1px solid brown", marginLeft: "4vw" }}>
               Masukan Keranjang

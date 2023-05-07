@@ -2,9 +2,14 @@ import { useState } from "react";
 import icon from "../../assets/arrowlocation.svg";
 import Footer from "../../components/Footer";
 import { Button, Card } from "react-bootstrap";
-import CartCard from "../../components/CartCard";
+import Cards from "../../components/CartCard";
 import { useContext } from "react";
 import { UserContext } from "../../context/Context";
+import choco from "../../assets/menu/choco.svg";
+import trash from "../../assets/trash.svg";
+import plus from "../../assets/plus.svg";
+import minus from "../../assets/minus.svg";
+import { useNavigate } from "react-router-dom";
 const Cart = () => {
   const [delivery, setDelivery] = useState(false);
   const {
@@ -16,7 +21,71 @@ const Cart = () => {
     Fetchmenu,
     quantity,
     setQuantity,
+    totalChoosen,
+    history,
+    setHistory,
   } = useContext(UserContext);
+  const navigate = useNavigate();
+  const leftsided = (
+    <>
+      <div className="col-1">
+        <button
+          className="btn mt-3 "
+          style={{ marginLeft: "-2vw" }}
+          onClick={() => {}}>
+          <img src={trash} style={{ width: "2.5vw" }} />
+        </button>
+      </div>
+      <div className="col-3 pt-2">
+        <div
+          className="border rounded-3 mt-3"
+          style={{
+            backgroundColor: "#FEF7CB",
+            width: "10vw",
+            height: "2.5vw",
+          }}>
+          <div className="row ">
+            <div className="col-4">
+              <button
+                className="btn"
+                onClick={() => {
+                  if (quantity > 0) {
+                    setQuantity(quantity - 1);
+                  }
+
+                  // console.log(total - 1);
+                  // setQuantity(quantity - 1);
+                }}>
+                <img src={minus} alt="" />
+              </button>
+            </div>
+            <div className="col-4 ">
+              <p className="fs-5 fw-semibold mt-1 ms-2">
+                {/* {total} */}
+                {quantity}
+              </p>
+            </div>
+            <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
+              <button
+                className="btn"
+                onClick={() => {
+                  setQuantity(quantity + 1);
+
+                  // setQuantity(quantity + 1);
+                }}>
+                <img src={plus} alt="" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+  const handleOnclick = () => {
+    console.log(totalChoosen);
+    setHistory(totalChoosen);
+    navigate("/account/transaction");
+  };
   // const Increase = () => {
   //   setQuantity(quantity + 1);
   // };
@@ -108,12 +177,19 @@ const Cart = () => {
                     />
                   </div>
                   <div className="col-7 ">
-                    <CartCard setTotal={setQuantity} total={quantity} />
+                    <Cards
+                      width={"45vw"}
+                      leftSide={leftsided}
+                      price={` ${totalChoosen.quantity} x Rp ${totalChoosen.actualprice}`}
+                      img={totalChoosen.img}
+                      menuName={`${totalChoosen.taste} (${totalChoosen.topping})`}
+                    />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row ms-1">
+
+            {/* <div className="row ms-1">
               <div className="col-6 ">
                 <div className="row">
                   <div className="col-1 mt-1 me-3">
@@ -129,7 +205,7 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="col-4">
             <div className="border rounded-3 shadow" style={{ height: "30vw" }}>
@@ -150,7 +226,9 @@ const Cart = () => {
                   </div>
                 </div>
                 <div className="col-12 mt-4">
-                  <p className="fs-5">Total Harga ()</p>
+                  <p className="fs-5">
+                    Total Harga ({totalChoosen.totalPrice})
+                  </p>
                 </div>
                 <div className="col-12 mt-5"></div>
                 <div className="col-12 mt-5"></div>
@@ -174,12 +252,15 @@ const Cart = () => {
                       <p className="fs-5 fw-semibold">Total Harga ()</p>
                     </div>
                     <div className="col-6 text-end">
-                      <p className="fs-5 fw-semibold">Rp 0</p>
+                      <p className="fs-5 fw-semibold">
+                        Rp {totalChoosen.totalPrice}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="col-12 ">
                   <button
+                    onClick={handleOnclick}
                     className="btn btn-warning w-75 ms-5"
                     style={{ border: "1.5px solid brown" }}>
                     Bayar Sekarang
