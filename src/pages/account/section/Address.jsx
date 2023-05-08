@@ -5,6 +5,7 @@ import {
   doc,
   onSnapshot,
   query,
+  updateDoc,
 } from "@firebase/firestore";
 import AddressCard from "../../../components/AddressCard";
 import { firestore } from "../../../firebase/config";
@@ -53,13 +54,25 @@ const Address = () => {
     setAddress("");
     setModalShow(false);
   };
+
   const handleDelete = async (id) => {
-    await deleteDoc(
-      collection(firestore, `address/${biodata.id}/listaddress/`, id)
-    );
-    // console.log();
+    await deleteDoc(doc(firestore, `address/${biodata.id}/listaddress/`, id));
   };
-  const handleUpdate = () => {};
+
+  const handleUpdate = async (id) => {
+    id.preventDefault();
+    await updateDoc(
+      doc(firestore, `address/${biodata.id}/listaddress/`, `${id}`),
+      {
+        nickaddress: address.nickaddress,
+        receiver: address.receiver,
+        fulladdress: address.fulladdress,
+        phone: address.phone,
+      }
+    );
+    setAddress("");
+    setModalShow(false);
+  };
 
   useEffect(() => {
     const q = query(collection(firestore, `address/${biodata.id}/listaddress`));
@@ -68,6 +81,7 @@ const Address = () => {
       querySnapshot.forEach((doc) => {
         usersdata.push({ ...doc.data(), id: doc.id });
       });
+
       setListAddress(usersdata);
     });
     return snapshot;
@@ -91,7 +105,6 @@ const Address = () => {
               <div className="col-8">
                 <AddressCard
                   key={index}
-                  id={e.id}
                   nickaddress={e.nickaddress}
                   receiver={e.receiver}
                   phone={e.phone}
@@ -100,6 +113,12 @@ const Address = () => {
                     handleDelete(e.id);
                   }}
                   showmodal={() => {
+                    setAddress({
+                      nickaddress: e.nickaddress,
+                      receiver: e.receiver,
+                      phone: e.phone,
+                      fulladdress: e.fulladdress,
+                    });
                     setModalShowUpdate(!modalshowUpdate);
                   }}
                 />

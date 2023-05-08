@@ -7,6 +7,7 @@ import {
   doc,
   onSnapshot,
   query,
+  setDoc,
   updateDoc,
 } from "@firebase/firestore";
 import { firestore } from "../../../firebase/config";
@@ -14,7 +15,7 @@ import ReactModal from "react-modal";
 import bg from "../../../assets/bg-modal.svg";
 import { useEffect } from "react";
 const Biodata = () => {
-  const { user, biodata, setBiodata } = useContext(UserContext);
+  const { user, biodata, setBiodata, firestoreid } = useContext(UserContext);
   const [modalshow, setModalShow] = useState(false);
   //   console.log(user);
   const customStyles = {
@@ -37,15 +38,49 @@ const Biodata = () => {
     e.preventDefault();
 
     await updateDoc(doc(firestore, "users", biodata.id), {
-      name: biodata.name,
-      gender: biodata.gender,
-      checked: biodata.checked,
-      date: biodata.date,
-      phone: biodata.phone,
+      name: biodata?.name,
+      gender: biodata?.gender,
+      checked: biodata?.checked,
+      date: biodata?.date,
+      phone: biodata?.phone,
     });
+
     setModalShow(!modalshow);
   };
+  const fetchingdata = async () => {
+    const q = query(collection(firestore, "users"));
+    const snapshot = onSnapshot(q, (querySnapshot) => {
+      let usersdata = [];
+      querySnapshot.forEach((doc) => {
+        usersdata.push({ ...doc.data(), id: doc.id });
+      });
+      const filteredbiodata = usersdata.find((i) => i.id === firestoreid);
+      if (filteredbiodata !== undefined) {
+        setBiodata({
+          id: filteredbiodata.id,
+          name: filteredbiodata.name,
+          date: filteredbiodata.date,
+          phone: filteredbiodata.phone,
+          gender: filteredbiodata.gender,
+          checked: filteredbiodata.checked,
+        });
+      } else {
+        setDoc(doc(firestore, "users", firestoreid), {
+          name: user.displayName,
+          gender: "",
+          checked: "",
+          date: "",
+          phone: "",
+        });
+      }
+      console.log(filteredbiodata);
+    });
+  };
 
+  useEffect(() => {
+    fetchingdata();
+    // console.log("=============================================");
+  }, []);
   return (
     <>
       {/* <p>Biodata</p>

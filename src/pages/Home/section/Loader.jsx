@@ -1,5 +1,5 @@
 import React from "react";
-import loader from "../assets/banana.gif";
+import loader from "../../../assets/banana.gif";
 function Loading() {
   return (
     <div

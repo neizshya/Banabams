@@ -52,6 +52,7 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [biodata, setBiodata] = useState({});
+  const [firestoreid, setFirestoreId] = useState("");
 
   const userCollectionRef = collection(firestore, "users");
   const Fetchtopping = useCallback(async () => {
@@ -62,7 +63,7 @@ function App() {
         setTopping(data);
       })
       .catch((err) => {
-        console.log(`err : ${err}`);
+        // console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -76,7 +77,7 @@ function App() {
         setMenu(data);
       })
       .catch((err) => {
-        console.log(`err : ${err}`);
+        // console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -90,7 +91,7 @@ function App() {
         setTestimonials(data);
       })
       .catch((err) => {
-        console.log(`err : ${err}`);
+        // console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -103,7 +104,6 @@ function App() {
   const logOut = () => {
     signOut(auth);
   };
-
   useEffect(() => {
     // fetching menu,topping,testi data
     Fetchtopping(), Fetchmenu(), Fetchtesti();
@@ -111,39 +111,25 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       let userid = currentUser?.providerData[0];
-
       setBiodata({
         id: userid?.uid,
         name: currentUser?.displayName,
       });
       const tempProvider = [];
       tempProvider.push(currentUser?.providerData[0]);
+      setFirestoreId(tempProvider[0]?.uid);
     });
 
     // fetch firestore
-    const q = query(collection(firestore, "users"));
-    const snapshot = onSnapshot(q, (querySnapshot) => {
-      let usersdata = [];
-      querySnapshot.forEach((doc) => {
-        usersdata.push({ ...doc.data(), id: doc.id });
-      });
-      let biodatauser = usersdata[0];
-      setBiodata({
-        id: biodatauser.id,
-        name: biodatauser.name,
-        date: biodatauser.date,
-        phone: biodatauser.phone,
-        gender: biodatauser.gender,
-        checked: biodatauser.checked,
-      });
-    });
+
     return () => {
       unsubscribe();
-      snapshot();
     };
   }, []);
+
   return (
     <>
+      {/* {console.log(firestoreid)} */}
       <UserContext.Provider
         value={{
           menu,
@@ -174,6 +160,7 @@ function App() {
           setTotalChoosenMenu,
           biodata,
           setBiodata,
+          firestoreid,
         }}>
         <BrowserRouter>
           <Header />
