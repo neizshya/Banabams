@@ -106,9 +106,8 @@ const Section2 = () => {
       {
         ...choosenMenu,
         quantity: quantity,
-        topping: totalPrices.topping.taste,
-        // totalPrice:
-        //   (totalPrices.total + parseInt(choosenMenu.price)) * quantity,
+        topping: totalPrices.topping.taste ? totalPrices.topping.taste : "",
+
         actualprice: totalPrices.total + parseInt(choosenMenu.price),
         isMenuAdded: true,
         isMenuChecked: true,

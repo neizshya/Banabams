@@ -17,7 +17,6 @@ import { useEffect } from "react";
 const Biodata = () => {
   const { user, biodata, setBiodata, firestoreid } = useContext(UserContext);
   const [modalshow, setModalShow] = useState(false);
-  //   console.log(user);
   const customStyles = {
     overlay: {
       zIndex: 9999999,
@@ -73,13 +72,11 @@ const Biodata = () => {
           phone: "",
         });
       }
-      console.log(filteredbiodata);
     });
   };
 
   useEffect(() => {
     fetchingdata();
-    // console.log("=============================================");
   }, []);
   return (
     <>

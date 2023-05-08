@@ -63,7 +63,7 @@ function App() {
         setTopping(data);
       })
       .catch((err) => {
-        // console.log(`err : ${err}`);
+        console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -77,7 +77,7 @@ function App() {
         setMenu(data);
       })
       .catch((err) => {
-        // console.log(`err : ${err}`);
+        console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -91,7 +91,7 @@ function App() {
         setTestimonials(data);
       })
       .catch((err) => {
-        // console.log(`err : ${err}`);
+        console.log(`err : ${err}`);
       })
       .finally(() => {
         setLoading(false);
@@ -129,7 +129,6 @@ function App() {
 
   return (
     <>
-      {/* {console.log(firestoreid)} */}
       <UserContext.Provider
         value={{
           menu,
