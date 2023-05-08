@@ -37,9 +37,18 @@ const Header = () => {
           boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
         },
       }}>
-      <p>Modal content</p>
-      <button onClick={hideModal}> close</button>
-      <button onClick={handleSignOut}> Sign Out</button>
+      <div className="row">
+        <div className="col-12 mb-3">
+          <button onClick={handleSignOut} className="btn bg-warning">
+            Sign Out
+          </button>
+        </div>
+        <div className="col-12 ">
+          <button onClick={hideModal} className="btn bg-warning">
+            Close
+          </button>
+        </div>
+      </div>
     </ReactModal>
   ));
   ReactModal.setAppElement("*");
