@@ -1,12 +1,31 @@
 import { useContext } from "react";
 import Cards from "../../../components/CartCard";
 import { UserContext } from "../../../context/Context";
+import { useEffect } from "react";
+import { collection, doc, onSnapshot, query } from "firebase/firestore";
+import { firestore } from "../../../firebase/config";
 
 const Transaction = () => {
-  const { quantity, history } = useContext(UserContext);
+  const { quantity, history, firestoreid, setHistory } =
+    useContext(UserContext);
   // const leftsided = (
 
   // );
+  const fetchingdata = async () => {
+    const q = query(
+      collection(firestore, `history/${firestoreid}/historytransactions/`)
+    );
+    const snapshot = onSnapshot(q, (querySnapshot) => {
+      let usersdata = [];
+      querySnapshot.forEach((doc) => {
+        usersdata.push({ ...doc.data(), id: doc.id });
+      });
+      setHistory(usersdata);
+    });
+  };
+  useEffect(() => {
+    fetchingdata();
+  }, []);
   return (
     <>
       <div className="container mb-5 mt-3" style={{ marginLeft: "4vw" }}>

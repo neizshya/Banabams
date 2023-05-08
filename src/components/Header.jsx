@@ -17,7 +17,7 @@ const Header = () => {
       await logOut();
       navigate("/");
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   const [showModal, hideModal] = useModal(() => (

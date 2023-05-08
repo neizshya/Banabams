@@ -42,7 +42,6 @@ const Address = () => {
       backgroundImage: `url(${bg})`,
     },
   };
-  // console.log(docs.nickaddress);
   const handleAddAddress = async (e) => {
     e.preventDefault();
     await addDoc(querycollection, {

@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { uid } from "uid";
 import moment from "moment";
 import { useEffect } from "react";
+import { addDoc, collection, doc } from "firebase/firestore";
+import { firestore } from "../../firebase/config";
 const Cart = () => {
   const [delivery, setDelivery] = useState(false);
   const {
@@ -28,6 +30,7 @@ const Cart = () => {
     setTotalChoosen,
     totalChoosenMenu,
     setTotalChoosenMenu,
+    firestoreid,
   } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -73,21 +76,19 @@ const Cart = () => {
       return a + b.actualprice * b.quantity;
     }, 0);
   };
-  const handleOnclick = () => {
-    // console.log(totalChoosenMenu);
 
-    // setTotalChoosen({
-    //   isMenuAdded: false,
-    // });
+  const handleOnclick = async (e) => {
+    e.preventDefault();
     if (totalChoosenMenu.length > 0) {
-      setHistory([
-        ...history,
+      await addDoc(
+        collection(firestore, `history/${firestoreid}/historytransactions/`),
         {
+          id: firestoreid,
           uid: uid(),
           data: totalChoosenMenu,
           date: moment().format("DD/MM/YYYY"),
-        },
-      ]);
+        }
+      );
       setTotalChoosenMenu([]);
       navigate("/account/transaction");
     } else {
