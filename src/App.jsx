@@ -27,7 +27,6 @@ import Payment from "./pages/account/section/Payment";
 import { setUserId } from "firebase/analytics";
 import { ToastContainer } from "react-toastify";
 import { collection, getDocs, onSnapshot, query } from "@firebase/firestore";
-import { async } from "@firebase/util";
 
 function App() {
   const [menu, setMenu] = useState([]);
@@ -53,7 +52,6 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [biodata, setBiodata] = useState({});
-  const [firestoreid, setFirestoreId] = useState([]);
 
   const userCollectionRef = collection(firestore, "users");
   const Fetchtopping = useCallback(async () => {
@@ -170,7 +168,6 @@ function App() {
           GoogleSignIn,
           logOut,
           user,
-          firestoreid,
           history,
           setHistory,
           totalChoosenMenu,

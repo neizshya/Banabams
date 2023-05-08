@@ -14,7 +14,7 @@ import ReactModal from "react-modal";
 import bg from "../../../assets/bg-modal.svg";
 import { useEffect } from "react";
 const Biodata = () => {
-  const { user, biodata, setBiodata, firestoreid } = useContext(UserContext);
+  const { user, biodata, setBiodata } = useContext(UserContext);
   const [modalshow, setModalShow] = useState(false);
   //   console.log(user);
   const customStyles = {
@@ -36,19 +36,6 @@ const Biodata = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // let key = doc(firestore, "users", biodata.id)._key;
-    // // const test = firestoreid === biodata.id ? true : false;
-    // // console.log(firestoreid.id);
-    // // console.log(test);
-    // firestoreid.map((e) => {
-    //   console.log(e.id);
-    //   if (e.id === biodata.id) {
-    //     console.log(true);
-    //   } else {
-    //     console.log(false);
-    //   }
-    // });
-
     await updateDoc(doc(firestore, "users", biodata.id), {
       name: biodata.name,
       gender: biodata.gender,
@@ -57,25 +44,7 @@ const Biodata = () => {
       phone: biodata.phone,
     });
     setModalShow(!modalshow);
-
-    //   await addDoc(collection(firestore, "users", `${biodata.id}`), {
-    //     name: biodata.name,
-    //     gender: biodata.gender,
-    //     checked: biodata.checked,
-    //     date: biodata.date,
-    //     phone: biodata.phone,
-    //   });
   };
-  //   useEffect(() => {
-  //     const q = query(collection(firestore, "users"));
-  //     const snapshot = onSnapshot(q, (querySnapshot) => {
-  //       let usersdata = [];
-  //       querySnapshot.forEach((doc) => {
-  //         usersdata.push({ ...doc.data(), id: doc.id });
-  //       });
-  //       console.log(usersdata);
-  //     });
-  //   }, []);
 
   return (
     <>

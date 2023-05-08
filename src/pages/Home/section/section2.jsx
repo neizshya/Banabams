@@ -255,7 +255,6 @@ const Section2 = () => {
         onRequestClose={() => setModalShow(false)}
         style={customStyles}
         contentLabel="Example Modal">
-        {/* <p>{choosenItem.menu}</p> */}
         <div className="row container">
           <div
             className="col-3 bg-warning rounded-circle"

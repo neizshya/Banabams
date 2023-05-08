@@ -1,4 +1,3 @@
-import choco from "../assets/menu/choco.svg";
 import trash from "../assets/trash.svg";
 import plus from "../assets/plus.svg";
 import minus from "../assets/minus.svg";
