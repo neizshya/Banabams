@@ -1,6 +1,14 @@
 import trash from "../assets/trash.svg";
 
-const AddressCard = () => {
+const AddressCard = ({
+  nickaddress,
+  receiver,
+  phone,
+  fulladdress,
+  handledelete,
+  showmodal,
+  id,
+}) => {
   return (
     <>
       <div
@@ -14,26 +22,30 @@ const AddressCard = () => {
             <div className="col-8">
               <div className="row ">
                 <div className="col-12 ">
-                  <p className="text-secondary">Rumah</p>
+                  <p className="text-secondary">{nickaddress}</p>
                 </div>
                 <div className="col-12">
-                  <p className="fw-semibold">Hapid Gantenk Sekali Dua Kali</p>
+                  <p className="fw-semibold">{receiver}</p>
                 </div>
                 <div className="col-12">
-                  <p>0812xxxxxxxx</p>
+                  <p>{phone}</p>
                 </div>
                 <div className="col-7">
-                  <p>Jl. Rawamangun 2 No.666, Tengah Tani, Kabupaten Cirebon</p>
+                  <p>{fulladdress}</p>
                 </div>
               </div>
             </div>
             <div className="col-4">
-              <button className="btn bg-warning " style={{ marginLeft: "5vw" }}>
+              <button
+                className="btn bg-warning "
+                style={{ marginLeft: "5vw" }}
+                onClick={showmodal}>
                 Ubah Alamat
               </button>
               <button
                 className="btn"
-                style={{ marginTop: "6vw", marginLeft: "9.5vw" }}>
+                style={{ marginTop: "6vw", marginLeft: "9.5vw" }}
+                onClick={handledelete}>
                 <img src={trash} style={{ width: "1.5vw" }} />
               </button>
             </div>

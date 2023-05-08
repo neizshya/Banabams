@@ -4,14 +4,24 @@ import plus from "../assets/plus.svg";
 import minus from "../assets/minus.svg";
 import { useContext } from "react";
 import { UserContext } from "../context/Context";
-const Cards = ({ setTotal, total, leftSide, price, img, menuName, width }) => {
-  const { quantity, setQuantity } = useContext(UserContext);
+const Cards = ({
+  setTotal,
+  total,
+  leftSide,
+  price,
+  img,
+  menuName,
+  width,
+  height,
+  special,
+}) => {
   return (
     <>
       <div
         className="card shadow rounded-4"
-        style={{ width: width, height: "7vw" }}>
+        style={{ width: width, height: height }}>
         <div className="card-body">
+          {special}
           {/* <p className="card-text">
             Some quick example text to build on the card title and make up the
             bulk of the card's content.

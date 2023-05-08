@@ -1,29 +1,81 @@
 import { useContext } from "react";
 import { UserContext } from "../../../context/Context";
 import { useState } from "react";
-
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+} from "@firebase/firestore";
+import { firestore } from "../../../firebase/config";
+import ReactModal from "react-modal";
+import bg from "../../../assets/bg-modal.svg";
+import { useEffect } from "react";
 const Biodata = () => {
-  const { user, name, setName, date, setDate, phone, setPhone, userid } =
-    useContext(UserContext);
-  const [gender, setGender] = useState({
-    gender: "",
-    checked: false,
-  });
-  const [isChecked, setisChecked] = useState(false);
-
+  const { user, biodata, setBiodata, firestoreid } = useContext(UserContext);
+  const [modalshow, setModalShow] = useState(false);
   //   console.log(user);
-  const handleOnchange = (e) => {
-    const value = e.target.value;
-    setGender({ gender: value, checked: true });
+  const customStyles = {
+    overlay: {
+      zIndex: 9999999,
+      backgroundColor: "rgba(0, 0, 0, 0.25)",
+    },
+    content: {
+      zIndex: 1000,
+      boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
+      width: "30vw",
+      height: "28vw",
+      top: "25%",
+      left: "35%",
+      backgroundImage: `url(${bg})`,
+    },
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(gender.gender);
-    console.log(name);
-    console.log(date);
-    console.log(phone);
-    console.log(userid);
+
+    // let key = doc(firestore, "users", biodata.id)._key;
+    // // const test = firestoreid === biodata.id ? true : false;
+    // // console.log(firestoreid.id);
+    // // console.log(test);
+    // firestoreid.map((e) => {
+    //   console.log(e.id);
+    //   if (e.id === biodata.id) {
+    //     console.log(true);
+    //   } else {
+    //     console.log(false);
+    //   }
+    // });
+
+    await updateDoc(doc(firestore, "users", biodata.id), {
+      name: biodata.name,
+      gender: biodata.gender,
+      checked: biodata.checked,
+      date: biodata.date,
+      phone: biodata.phone,
+    });
+    setModalShow(!modalshow);
+
+    //   await addDoc(collection(firestore, "users", `${biodata.id}`), {
+    //     name: biodata.name,
+    //     gender: biodata.gender,
+    //     checked: biodata.checked,
+    //     date: biodata.date,
+    //     phone: biodata.phone,
+    //   });
   };
+  //   useEffect(() => {
+  //     const q = query(collection(firestore, "users"));
+  //     const snapshot = onSnapshot(q, (querySnapshot) => {
+  //       let usersdata = [];
+  //       querySnapshot.forEach((doc) => {
+  //         usersdata.push({ ...doc.data(), id: doc.id });
+  //       });
+  //       console.log(usersdata);
+  //     });
+  //   }, []);
 
   return (
     <>
@@ -39,21 +91,6 @@ const Biodata = () => {
                 src={user?.photoURL}
                 alt=""
               />
-              <div className="row">
-                <div className="col-12  mt-5">
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    accept=".png,.svg"
-                  />
-                </div>
-                <div className="col-12 mt-3">
-                  <p className="fs-5 fw-medium">
-                    Maksimum File 15MB dengan ekstensi JPG, JPEG, PNG, GIF
-                  </p>
-                </div>
-              </div>
             </div>
             <div className="col-4">
               <div className="mb-2">
@@ -67,8 +104,11 @@ const Biodata = () => {
                 </label>
                 <input
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={biodata.date}
+                  onChange={(e) =>
+                    // setDate(e.target.value)
+                    setBiodata({ ...biodata, date: e.target.value })
+                  }
                   className="form-control"
                   id="name"
                   placeholder="Masukan Nama"
@@ -86,9 +126,15 @@ const Biodata = () => {
                         name="gender"
                         className="me-3"
                         // need default value
-                        onChange={handleOnchange}
+                        onChange={(e) => {
+                          setBiodata({
+                            ...biodata,
+                            gender: e.target.value,
+                            checked: true,
+                          });
+                        }}
                         checked={
-                          gender.gender === "male" && gender.checked === true
+                          biodata.gender === "male" && biodata.checked === true
                             ? true
                             : false
                         }
@@ -101,9 +147,16 @@ const Biodata = () => {
                         value="female"
                         name="gender"
                         className="me-3"
-                        onChange={handleOnchange}
+                        onChange={(e) =>
+                          setBiodata({
+                            ...biodata,
+                            gender: e.target.value,
+                            checked: true,
+                          })
+                        }
                         checked={
-                          gender.gender === "female" && gender.checked === true
+                          biodata.gender === "female" &&
+                          biodata.checked === true
                             ? true
                             : false
                         }
@@ -123,8 +176,10 @@ const Biodata = () => {
                   className="form-control"
                   id="message"
                   placeholder="Masukan Nomor Hp"
-                  onChange={(e) => setPhone(e.target.value)}
-                  value={phone}
+                  onChange={(e) =>
+                    setBiodata({ ...biodata, phone: e.target.value })
+                  }
+                  value={biodata.phone}
                   required
                 />
               </div>
@@ -145,6 +200,22 @@ const Biodata = () => {
           </div>
         </form>
       </div>
+      <ReactModal
+        isOpen={modalshow}
+        onRequestClose={() => setModalShow(false)}
+        style={customStyles}
+        contentLabel="Example Modal">
+        {/* <p>{choosenItem.menu}</p> */}
+        <p className="fw-bold fs-3">Data Disimpan</p>
+        <button
+          className="btn btn-warning"
+          onClick={() => {
+            // setIsLoggedIn(true);
+            setModalShow(false);
+          }}>
+          Tutup
+        </button>
+      </ReactModal>
     </>
   );
 };

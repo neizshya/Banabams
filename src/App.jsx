@@ -18,18 +18,17 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "./firebase/config";
+import { auth, firestore } from "./firebase/config";
 import PrivateRoute from "./components/privateRoute";
 import Biodata from "./pages/account/section/Biodata";
 import Address from "./pages/account/section/Address";
 import Transaction from "./pages/account/section/Transaction";
 import Payment from "./pages/account/section/Payment";
 import { setUserId } from "firebase/analytics";
-import Biodata from "./pages/account/section/Biodata";
-import Address from "./pages/account/section/Address";
-import Transaction from "./pages/account/section/Transaction";
-import Payment from "./pages/account/section/Payment";
-import { setUserId } from "firebase/analytics";
+import { ToastContainer } from "react-toastify";
+import { collection, getDocs, onSnapshot, query } from "@firebase/firestore";
+import { async } from "@firebase/util";
+
 function App() {
   const [menu, setMenu] = useState([]);
   const [topping, setTopping] = useState([]);
@@ -49,26 +48,14 @@ function App() {
     topping: "",
     totalPrice: 0,
   });
-
   const [history, setHistory] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [phone, setPhone] = useState("");
-  const [userid, setUserId] = useState("");
-  const [biodata, setBiodata] = useState({
-    id: "",
-  });
-  const [quantity, setQuantity] = useState(1);
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [phone, setPhone] = useState("");
-  const [userid, setUserId] = useState("");
-  const [biodata, setBiodata] = useState({
-    id: "",
-  });
+  const [biodata, setBiodata] = useState({});
+  const [firestoreid, setFirestoreId] = useState([]);
+
+  const userCollectionRef = collection(firestore, "users");
   const Fetchtopping = useCallback(async () => {
     setLoading(true);
     await MockAPI.get("/listtopping")
@@ -118,28 +105,47 @@ function App() {
   const logOut = () => {
     signOut(auth);
   };
+
   useEffect(() => {
+    // fetching menu,topping,testi data
     Fetchtopping(), Fetchmenu(), Fetchtesti();
+    // auth
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setName(currentUser.displayName);
+      let userid = currentUser?.providerData[0];
+
+      setBiodata({
+        id: userid?.uid,
+        name: currentUser?.displayName,
+      });
       const tempProvider = [];
-      tempProvider.push(currentUser.providerData[0]);
-      setUserId(tempProvider[0]?.uid);
-      setName(currentUser.displayName);
-      const tempProvider = [];
-      tempProvider.push(currentUser.providerData[0]);
-      setUserId(tempProvider[0]?.uid);
+      tempProvider.push(currentUser?.providerData[0]);
+    });
+
+    // fetch firestore
+    const q = query(collection(firestore, "users"));
+    const snapshot = onSnapshot(q, (querySnapshot) => {
+      let usersdata = [];
+      querySnapshot.forEach((doc) => {
+        usersdata.push({ ...doc.data(), id: doc.id });
+      });
+      let biodatauser = usersdata[0];
+      setBiodata({
+        id: biodatauser.id,
+        name: biodatauser.name,
+        date: biodatauser.date,
+        phone: biodatauser.phone,
+        gender: biodatauser.gender,
+        checked: biodatauser.checked,
+      });
     });
     return () => {
       unsubscribe();
+      snapshot();
     };
   }, []);
   return (
     <>
-      {/* <div className="text-center">
-        <img src={loader} alt="" />
-      </div> */}
       <UserContext.Provider
         value={{
           menu,
@@ -164,24 +170,20 @@ function App() {
           GoogleSignIn,
           logOut,
           user,
-          name,
-          setName,
-          date,
-          setDate,
-          phone,
-          setPhone,
-          userid,
+          firestoreid,
           history,
           setHistory,
           totalChoosenMenu,
           setTotalChoosenMenu,
+          biodata,
+          setBiodata,
         }}>
         <BrowserRouter>
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Cart />} />
             <Route element={<PrivateRoute />}>
+              <Route path="/cart" element={<Cart />} />
               <Route path="/account" element={<Account />}>
                 <Route path="/account/biodata" element={<Biodata />} />
                 <Route path="/account/address" element={<Address />} />

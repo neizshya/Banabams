@@ -4,39 +4,58 @@ import { UserContext } from "../../../context/Context";
 
 const Transaction = () => {
   const { quantity, history } = useContext(UserContext);
-  const leftsided = (
-    <>
-      <div className="col-4 text-center">
-        <div className="row">
-          <div className="col-12">
-            <p className="text-secondary fs-5">Total Belanja</p>
-          </div>
-          <div className="col-12">
-            <p className="fs-5">Rp {history?.totalPrice}</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-  console.log(history);
+  // const leftsided = (
+
+  // );
   return (
     <>
       <div className="container mb-5 mt-3" style={{ marginLeft: "4vw" }}>
         <div className="row">
-          {history.map((e) => (
+          {history?.length > 0 ? (
             <>
-              {console.log(e)}
-              <div className="col-12 mb-3">
-                <Cards
-                  width={"65vw"}
-                  leftSide={leftsided}
-                  price={` ${e?.quantity} x Rp ${e?.actualprice}`}
-                  img={e?.img}
-                  menuName={`${e?.taste} (${e?.topping ? e?.topping : " "})`}
-                />
+              {history?.map((e) =>
+                e.data.map((item) => (
+                  <>
+                    <div className="col-12 mb-3" style={{ width: "68vw" }}>
+                      <Cards
+                        width={"65vw"}
+                        special={<>{e.date}</>}
+                        leftSide={
+                          <>
+                            <div className="col-4 text-center">
+                              <div className="row">
+                                <div className="col-12">
+                                  <p className="text-secondary fs-5">
+                                    Total Belanja
+                                  </p>
+                                </div>
+                                <div className="col-12">
+                                  <p className="fs-5">
+                                    Rp {item?.actualprice * item?.quantity}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        }
+                        price={` ${item?.quantity} x Rp ${item?.actualprice}`}
+                        img={item?.img}
+                        menuName={`${item?.taste} (${
+                          item?.topping ? item?.topping : " "
+                        })`}
+                      />
+                    </div>
+                  </>
+                ))
+              )}
+            </>
+          ) : (
+            <>
+              <div className="col-10 text-center fs-5">
+                Silahkan mulai berbelanja
               </div>
             </>
-          ))}
+          )}
         </div>
       </div>
     </>

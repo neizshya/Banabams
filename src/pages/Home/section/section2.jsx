@@ -15,15 +15,23 @@ import bg from "../../../assets/bg-modal.svg";
 import cancel from "../../../assets/cancel-icon.svg";
 import plus from "../../../assets/plus.svg";
 import minus from "../../../assets/minus.svg";
+import { Navigate, useNavigate } from "react-router";
+import { ToastContainer, toast } from "react-toastify";
+import { uid } from "uid";
 
 const Section2 = () => {
   const [modalShow, setModalShow] = useState(false);
+  const [modalShowNotLoggedIn, setmodalShowNotLoggedIn] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [totalPrices, setTotalPrices] = useState({
     total: 0,
     topping: "",
   });
   const {
+    isLoggedIn,
+    setIsLoggedIn,
+    GoogleSignIn,
+    logOut,
     menu,
     setMenu,
     topping,
@@ -37,16 +45,18 @@ const Section2 = () => {
     setTotalChoosen,
     totalChoosenMenu,
     setTotalChoosenMenu,
+    user,
   } = useContext(UserContext);
-  const initialstateChoosemenu = {
-    menu: "",
-    img: "",
-    taste: "",
-    price: "",
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignIn();
+    } catch (error) {
+      console.error(error);
+    }
   };
-  const [totalPriceWithMenu, setTotalPriceWithMenu] = useState(0);
+  const navigate = useNavigate();
   const [choosenMenu, setChoosenMenu] = useState({});
-  const [choosenTopping, setchoosenTopping] = useState({});
   const customStyles = {
     overlay: {
       zIndex: 9999999,
@@ -96,16 +106,17 @@ const Section2 = () => {
         ...choosenMenu,
         quantity: quantity,
         topping: totalPrices.topping.taste,
-        totalPrice:
-          (totalPrices.total + parseInt(choosenMenu.price)) * quantity,
+        // totalPrice:
+        //   (totalPrices.total + parseInt(choosenMenu.price)) * quantity,
         actualprice: totalPrices.total + parseInt(choosenMenu.price),
         isMenuAdded: true,
         isMenuChecked: true,
+        id: uid(),
       },
     ]);
     setModalShow(!modalShow);
+    navigate("/cart");
   };
-  console.log(totalChoosenMenu);
   const toppingView = (
     <>
       {topping.map((item) => (
@@ -176,7 +187,12 @@ const Section2 = () => {
                         taste: item.taste,
                         price: item.price,
                       });
-                      setModalShow(!modalShow);
+                      if (!user) {
+                        // alert("Login Terlebih Dahulu")
+                        setmodalShowNotLoggedIn(true);
+                      } else {
+                        setModalShow(!modalShow);
+                      }
                       // showModal();
                     }}>
                     <img src={cart} alt="" style={{ width: "2vw" }} />
@@ -218,6 +234,23 @@ const Section2 = () => {
 
       {/* modal */}
       <ReactModal
+        isOpen={modalShowNotLoggedIn}
+        onRequestClose={() => setmodalShowNotLoggedIn(false)}
+        style={customStyles}
+        contentLabel="Example Modal">
+        {/* <p>{choosenItem.menu}</p> */}
+        <p className="fw-bold fs-3">Mohon Login Terlebih Dahulu</p>
+        <button
+          className="btn btn-warning"
+          onClick={() => {
+            // setIsLoggedIn(true);
+            handleGoogleSignIn();
+            setmodalShowNotLoggedIn(!modalShowNotLoggedIn);
+          }}>
+          Login
+        </button>
+      </ReactModal>
+      <ReactModal
         isOpen={modalShow}
         onRequestClose={() => setModalShow(false)}
         style={customStyles}
@@ -242,9 +275,7 @@ const Section2 = () => {
               className="btn w-full"
               onClick={() => {
                 setModalShow(false);
-                // setChoosenMenu(initialstateChoosemenu);
-                setQuantity(0);
-                setQuantity(0);
+                setQuantity(1);
               }}>
               <img src={cancel} alt="" />
             </button>
@@ -259,19 +290,6 @@ const Section2 = () => {
                 <div className="col-6 mt-3">
                   <div className="row">
                     <div className="col-1">
-                      {/* <input
-                        type="checkbox"
-                        name="pilih"
-                        id={item.id}
-                        checked={item.checked}
-                        className="mt-3"
-                        style={{ transform: "scale(2)" }}
-                        value={item.price}
-                        // checked={item.checked[index]}
-                        onChange={(e) => {
-                          handleChangeInputMenuModal(e);
-                        }}
-                      /> */}
                       <input
                         style={{ transform: "scale(2)" }}
                         type="checkbox"
@@ -312,8 +330,6 @@ const Section2 = () => {
                 <div className="col-4">
                   <button className="btn" onClick={decrement}>
                     <img src={minus} alt="" />
-                  <button className="btn" onClick={decrement}>
-                    <img src={minus} alt="" />
                   </button>
                 </div>
                 <div className="col-4 ">
@@ -323,8 +339,6 @@ const Section2 = () => {
                   </p>
                 </div>
                 <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
-                  <button className="btn" onClick={increment}>
-                    <img src={plus} alt="" />
                   <button className="btn" onClick={increment}>
                     <img src={plus} alt="" />
                   </button>

@@ -7,7 +7,6 @@ import {
 } from "@react-google-maps/api";
 import { useCallback, useEffect, useState } from "react";
 import Loading from "../../../components/loader";
-import loader from "../../../assets/banana.gif";
 import Cardview from "../../../components/Card";
 import { Card } from "react-bootstrap";
 import Form from "../../../components/Form";

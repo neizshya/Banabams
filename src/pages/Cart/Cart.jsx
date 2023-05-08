@@ -3,32 +3,18 @@ import icon from "../../assets/arrowlocation.svg";
 import Footer from "../../components/Footer";
 import { Button, Card } from "react-bootstrap";
 import Cards from "../../components/CartCard";
-import Cards from "../../components/CartCard";
 import { useContext } from "react";
 import { UserContext } from "../../context/Context";
+
 import choco from "../../assets/menu/choco.svg";
 import trash from "../../assets/trash.svg";
 import plus from "../../assets/plus.svg";
 import minus from "../../assets/minus.svg";
 import { useNavigate } from "react-router-dom";
-import choco from "../../assets/menu/choco.svg";
-import trash from "../../assets/trash.svg";
-import plus from "../../assets/plus.svg";
-import minus from "../../assets/minus.svg";
-import { useNavigate } from "react-router-dom";
+import { uid } from "uid";
+import moment from "moment";
+import { useEffect } from "react";
 const Cart = () => {
-  const initialstate = {
-    actualprice: 0,
-    img: "",
-    isMenuAdded: false,
-    isMenuChecked: true,
-    menu: "",
-    price: "",
-    quantity: 1,
-    taste: "",
-    topping: "",
-    totalPrice: 0,
-  };
   const [delivery, setDelivery] = useState(false);
   const {
     menu,
@@ -37,8 +23,6 @@ const Cart = () => {
     setTopping,
     Fetchtopping,
     Fetchmenu,
-    quantity,
-    setQuantity,
     totalChoosen,
     history,
     setHistory,
@@ -47,80 +31,71 @@ const Cart = () => {
     setTotalChoosenMenu,
   } = useContext(UserContext);
   const navigate = useNavigate();
-  const leftsided = (
-    <>
-      <div className="col-1">
-        <button
-          className="btn mt-3 "
-          style={{ marginLeft: "-2vw" }}
-          onClick={() => {
-            setTotalChoosen({
-              isMenuAdded: false,
-            });
-          }}>
-          <img src={trash} style={{ width: "2.5vw" }} />
-        </button>
-      </div>
-      <div className="col-3 pt-2">
-        <div
-          className="border rounded-3 mt-3"
-          style={{
-            backgroundColor: "#FEF7CB",
-            width: "10vw",
-            height: "2.5vw",
-          }}>
-          <div className="row ">
-            <div className="col-4">
-              <button
-                className="btn"
-                onClick={() => {
-                  if (quantity > 0) {
-                    setQuantity(quantity - 1);
-                  }
 
-                  // console.log(total - 1);
-                  // setQuantity(quantity - 1);
-                }}>
-                <img src={minus} alt="" />
-              </button>
-            </div>
-            <div className="col-4 ">
-              <p className="fs-5 fw-semibold mt-1 ms-2">
-                {/* {total} */}
-                {quantity}
-              </p>
-            </div>
-            <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
-              <button
-                className="btn"
-                onClick={() => {
-                  setQuantity(quantity + 1);
+  const increment = (i) => {
+    const temp = i;
 
-                  // setQuantity(quantity + 1);
-                }}>
-                <img src={plus} alt="" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+    const temparray = totalChoosenMenu;
+    const searchindex = temparray.findIndex((e) => e.id === i.id);
+    temparray.splice(searchindex, 1);
+    setTotalChoosenMenu([
+      ...temparray,
+      { ...temp, quantity: temp.quantity + 1 },
+    ]);
+  };
+  const decrement = (i) => {
+    const temp = i;
+    const temparray = totalChoosenMenu;
+    const searchindex = temparray.findIndex((e) => e.id === i.id);
+    temparray.splice(searchindex, 1);
+    if (temp.quantity <= 1) {
+      setTotalChoosenMenu([...temparray]);
+    } else {
+      setTotalChoosenMenu([
+        ...temparray,
+        {
+          ...temp,
+          quantity: temp.quantity - 1,
+          actualprice: temp.actualprice,
+        },
+      ]);
+    }
+  };
+  const deleteData = (i) => {
+    const temparray = totalChoosenMenu;
+    const searchindex = temparray.findIndex((e) => e.id === i.id);
+    temparray.splice(searchindex, 1);
+    setTotalChoosenMenu([...temparray]);
+    // const test = totalChoosenMenu.filter((e) => e.index !== index);
+    // totalChoosenMenu.splice(index, 1);
+  };
+  const accumulateTotalPrice = (items) => {
+    return items.reduce((a, b) => {
+      return a + b.actualprice * b.quantity;
+    }, 0);
+  };
   const handleOnclick = () => {
-    setHistory(totalChoosenMenu);
+    // console.log(totalChoosenMenu);
+
     // setTotalChoosen({
     //   isMenuAdded: false,
     // });
-    setTotalChoosenMenu([initialstate]);
-    navigate("/account/transaction");
+    if (totalChoosenMenu.length > 0) {
+      setHistory([
+        ...history,
+        {
+          uid: uid(),
+          data: totalChoosenMenu,
+          date: moment().format("DD/MM/YYYY"),
+        },
+      ]);
+      setTotalChoosenMenu([]);
+      navigate("/account/transaction");
+    } else {
+      alert("masukan menu ke keranjang");
+    }
   };
-  console.log(history);
-  // const Increase = () => {
-  //   setQuantity(quantity + 1);
-  // };
-  // const Decrease = () => {
-  //   setQuantity(quantity - 1);
-  // };
+
   return (
     <>
       <div className="container">
@@ -197,33 +172,7 @@ const Cart = () => {
             <div className="row ms-1 mb-3">
               <div className="col-6 ">
                 <div className="row">
-                  {/* {totalChoosen.isMenuAdded ? (
-                    <>
-                      <div className="col-1 mt-1 me-3">
-                        <input
-                          type="checkbox"
-                          name="pilih"
-                          id="pilih"
-                          checked={totalChoosen.isMenuChecked}
-                          style={{ transform: "scale(2)" }}
-                        />
-                      </div>
-                      <div className="col-7 ">
-                        <Cards
-                          width={"45vw"}
-                          leftSide={leftsided}
-                          price={` ${totalChoosen.quantity} x Rp ${totalChoosen.actualprice}`}
-                          img={totalChoosen.img}
-                          menuName={`${totalChoosen.taste} (${totalChoosen.topping})`}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="col-12 ">
-                      <p className=" fs-3">anda belum memasukan menu</p>
-                    </div>
-                  )} */}
-                  {totalChoosenMenu[0]?.isMenuAdded ? (
+                  {totalChoosenMenu?.length > 0 ? (
                     <>
                       <div className="row">
                         {totalChoosenMenu.map((e, index) => (
@@ -241,11 +190,69 @@ const Cart = () => {
                               </div>
                               <div className="col-7 ">
                                 <Cards
+                                  height={"7vw"}
                                   width={"45vw"}
-                                  leftSide={leftsided}
+                                  leftSide={
+                                    <>
+                                      <div className="col-1">
+                                        <button
+                                          className="btn mt-3 "
+                                          style={{ marginLeft: "-2vw" }}
+                                          onClick={() => {
+                                            deleteData(e);
+                                            // buat delete index
+                                          }}>
+                                          <img
+                                            src={trash}
+                                            style={{ width: "2.5vw" }}
+                                          />
+                                        </button>
+                                      </div>
+                                      <div className="col-3 pt-2">
+                                        <div
+                                          className="border rounded-3 mt-3"
+                                          style={{
+                                            backgroundColor: "#FEF7CB",
+                                            width: "10vw",
+                                            height: "2.5vw",
+                                          }}>
+                                          <div className="row ">
+                                            <div className="col-4">
+                                              <button
+                                                className="btn"
+                                                onClick={() => {
+                                                  decrement(e);
+                                                }}>
+                                                <img src={minus} alt="" />
+                                              </button>
+                                            </div>
+                                            <div className="col-4 ">
+                                              <p className="fs-5 fw-semibold mt-1 ms-2">
+                                                {/* {total} */}
+                                                {e.quantity}
+                                              </p>
+                                            </div>
+                                            <div
+                                              className="col-4"
+                                              style={{ marginLeft: "-0.5vw" }}>
+                                              <button
+                                                className="btn"
+                                                onClick={() => {
+                                                  increment(e);
+                                                }}>
+                                                <img src={plus} alt="" />
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </>
+                                  }
                                   price={`${e.quantity} x Rp ${e.actualprice}`}
                                   img={e.img}
-                                  menuName={`${e.taste} (${e.topping})`}
+                                  menuName={`${e.taste} (${
+                                    e.topping ? e.topping : ""
+                                  })`}
                                 />
                               </div>
                             </div>
@@ -284,7 +291,7 @@ const Cart = () => {
                 </div>
                 <div className="col-12 mt-4">
                   <p className="fs-5">
-                    Total Harga ({totalChoosen.totalPrice})
+                    Total Harga ({accumulateTotalPrice(totalChoosenMenu)})
                   </p>
                 </div>
                 <div className="col-12 mt-5"></div>
@@ -310,7 +317,7 @@ const Cart = () => {
                     </div>
                     <div className="col-6 text-end">
                       <p className="fs-5 fw-semibold">
-                        Rp {totalChoosen.totalPrice}
+                        Rp {accumulateTotalPrice(totalChoosenMenu)}
                       </p>
                     </div>
                   </div>

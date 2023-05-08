@@ -4,10 +4,30 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
+import emailjs from "@emailjs/browser";
 
 const Forms = ({ name, setName, email, setEmail, message, setMessage }) => {
   const form = useRef();
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        "service_8105qdh",
+        "template_spq6kpf",
+        form.current,
+        "mi4Bi2T_Bn0ve9enG"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+    e.target.reset();
+  };
 
   return (
     <>
@@ -18,10 +38,11 @@ const Forms = ({ name, setName, email, setEmail, message, setMessage }) => {
           </label>
           <input
             type="text"
-            value={name}
-            onChange={setName}
+            // value={name}
+            // onChange={setName}
             className="form-control"
             id="name"
+            name="user_name"
             placeholder="Masukan Nama"
             required
           />
@@ -34,8 +55,9 @@ const Forms = ({ name, setName, email, setEmail, message, setMessage }) => {
             type="email"
             className="form-control"
             id="email"
-            value={email}
-            onChange={setEmail}
+            name="user_email"
+            // value={email}
+            // onChange={setEmail}
             placeholder="Masukan email"
             required
           />
@@ -47,6 +69,7 @@ const Forms = ({ name, setName, email, setEmail, message, setMessage }) => {
           <input
             type="text"
             className="form-control"
+            name="message"
             id="message"
             placeholder="Masukan pesan"
             required

@@ -85,19 +85,11 @@ const Header = () => {
               <div className="row ">
                 <div className="col-4">
                   <li className="nav-item">
-                    <img
-                      width={"62%"}
-                      src={notif}
-                      alt=""
-                      onMouseOver={showModal}
-                    />
+                    <img width={"62%"} src={notif} alt="" />
                   </li>
                 </div>
                 <div className="col-4">
-                  <NavLink
-                    to={"/cart"}
-                    className="d-flex align-items-center"
-                    onMouseOver={showModal}>
+                  <NavLink to={"/cart"} className="d-flex align-items-center">
                     <li className="nav-item">
                       <img width={"75%"} src={cart} alt="" />
                     </li>
