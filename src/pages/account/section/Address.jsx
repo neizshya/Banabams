@@ -22,6 +22,7 @@ const Address = () => {
   const [modalshowUpdate, setModalShowUpdate] = useState(false);
   const [address, setAddress] = useState({});
   const [listAddress, setListAddress] = useState([]);
+  const [addressid, setAddressId] = useState();
 
   const querycollection = collection(
     firestore,
@@ -61,7 +62,7 @@ const Address = () => {
   const handleUpdate = async (id) => {
     id.preventDefault();
     await updateDoc(
-      doc(firestore, `address/${biodata.id}/listaddress/`, `${id}`),
+      doc(firestore, `address/${biodata.id}/listaddress/`, `${addressid}`),
       {
         nickaddress: address.nickaddress,
         receiver: address.receiver,
@@ -70,7 +71,7 @@ const Address = () => {
       }
     );
     setAddress("");
-    setModalShow(false);
+    setModalShowUpdate(false);
   };
 
   useEffect(() => {
@@ -118,6 +119,8 @@ const Address = () => {
                       phone: e.phone,
                       fulladdress: e.fulladdress,
                     });
+
+                    setAddressId(e.id);
                     setModalShowUpdate(!modalshowUpdate);
                   }}
                 />
