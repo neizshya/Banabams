@@ -7,7 +7,6 @@ import {
 } from "@react-google-maps/api";
 import { useCallback, useEffect, useState } from "react";
 import Loading from "../../../components/loader";
-import loader from "../../../assets/banana.gif";
 import Cardview from "../../../components/Card";
 import { Card } from "react-bootstrap";
 import Form from "../../../components/Form";
@@ -70,9 +69,11 @@ const Section3 = () => {
   );
   return (
     <>
-      <p className="fs-1">Kontak Kami</p>
+      <div id="#kontak">
+        <p className="fs-1">Kontak Kami</p>
 
-      {isLoading ? generalview : <Loading />}
+        {isLoading ? generalview : <Loading />}
+      </div>
     </>
   );
 };
