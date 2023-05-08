@@ -7,6 +7,7 @@ import {
   doc,
   onSnapshot,
   query,
+  setDoc,
   updateDoc,
 } from "@firebase/firestore";
 import { firestore } from "../../../firebase/config";
@@ -36,47 +37,50 @@ const Biodata = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // let key = doc(firestore, "users", biodata.id)._key;
-    // // const test = firestoreid === biodata.id ? true : false;
-    // // console.log(firestoreid.id);
-    // // console.log(test);
-    // firestoreid.map((e) => {
-    //   console.log(e.id);
-    //   if (e.id === biodata.id) {
-    //     console.log(true);
-    //   } else {
-    //     console.log(false);
-    //   }
-    // });
-
     await updateDoc(doc(firestore, "users", biodata.id), {
-      name: biodata.name,
-      gender: biodata.gender,
-      checked: biodata.checked,
-      date: biodata.date,
-      phone: biodata.phone,
+      name: biodata?.name,
+      gender: biodata?.gender,
+      checked: biodata?.checked,
+      date: biodata?.date,
+      phone: biodata?.phone,
     });
+
     setModalShow(!modalshow);
-
-    //   await addDoc(collection(firestore, "users", `${biodata.id}`), {
-    //     name: biodata.name,
-    //     gender: biodata.gender,
-    //     checked: biodata.checked,
-    //     date: biodata.date,
-    //     phone: biodata.phone,
-    //   });
   };
-  //   useEffect(() => {
-  //     const q = query(collection(firestore, "users"));
-  //     const snapshot = onSnapshot(q, (querySnapshot) => {
-  //       let usersdata = [];
-  //       querySnapshot.forEach((doc) => {
-  //         usersdata.push({ ...doc.data(), id: doc.id });
-  //       });
-  //       console.log(usersdata);
-  //     });
-  //   }, []);
+  const fetchingdata = async () => {
+    const q = query(collection(firestore, "users"));
+    const snapshot = onSnapshot(q, (querySnapshot) => {
+      let usersdata = [];
+      querySnapshot.forEach((doc) => {
+        usersdata.push({ ...doc.data(), id: doc.id });
+      });
+      const filteredbiodata = usersdata.find((i) => i.id === firestoreid);
+      if (filteredbiodata !== undefined) {
+        setBiodata({
+          id: filteredbiodata.id,
+          name: filteredbiodata.name,
+          date: filteredbiodata.date,
+          phone: filteredbiodata.phone,
+          gender: filteredbiodata.gender,
+          checked: filteredbiodata.checked,
+        });
+      } else {
+        setDoc(doc(firestore, "users", firestoreid), {
+          name: user.displayName,
+          gender: "",
+          checked: "",
+          date: "",
+          phone: "",
+        });
+      }
+      console.log(filteredbiodata);
+    });
+  };
 
+  useEffect(() => {
+    fetchingdata();
+    // console.log("=============================================");
+  }, []);
   return (
     <>
       {/* <p>Biodata</p>

@@ -8,7 +8,8 @@ import {
 import { useContext, useEffect, useState } from "react";
 import Cardview from "../../../components/Card";
 import { UserContext } from "../../../context/Context";
-import Loading from "../../../components/loader";
+// import Loading from "../../../components/loader";
+import Loading from "./Loader";
 import { useModal } from "react-modal-hook";
 import ReactModal from "react-modal";
 import bg from "../../../assets/bg-modal.svg";
@@ -255,7 +256,6 @@ const Section2 = () => {
         onRequestClose={() => setModalShow(false)}
         style={customStyles}
         contentLabel="Example Modal">
-        {/* <p>{choosenItem.menu}</p> */}
         <div className="row container">
           <div
             className="col-3 bg-warning rounded-circle"
