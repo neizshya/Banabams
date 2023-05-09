@@ -36,7 +36,6 @@ const Cart = () => {
   // handle increase quantity
   const increment = (i) => {
     const temp = i;
-
     const temparray = totalChoosenMenu;
     const searchindex = temparray.findIndex((e) => e.id === i.id);
     temparray.splice(searchindex, 1);
@@ -73,6 +72,7 @@ const Cart = () => {
     // const test = totalChoosenMenu.filter((e) => e.index !== index);
     // totalChoosenMenu.splice(index, 1);
   };
+  // accumulate total price base on totalChoosenMenu quantity
   const accumulateTotalPrice = (items) => {
     return items.reduce((a, b) => {
       return a + b.actualprice * b.quantity;

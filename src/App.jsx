@@ -54,6 +54,7 @@ function App() {
   const [firestoreid, setFirestoreId] = useState("");
 
   const userCollectionRef = collection(firestore, "users");
+  // fetch topping
   const Fetchtopping = useCallback(async () => {
     setLoading(true);
     await MockAPI.get("/listtopping")
@@ -68,6 +69,7 @@ function App() {
         setLoading(false);
       });
   });
+  // fetch menua
   const Fetchmenu = useCallback(async () => {
     setLoading(true);
     await MockAPI.get("/listmenu")
@@ -82,6 +84,7 @@ function App() {
         setLoading(false);
       });
   });
+  // fetch testimonials
   const Fetchtesti = useCallback(async () => {
     setLoading(true);
     await Testimonials.get("/testimonial")

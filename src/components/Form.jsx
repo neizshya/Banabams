@@ -6,16 +6,19 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import emailjs from "@emailjs/browser";
 
-const Forms = ({ name, setName, email, setEmail, message, setMessage }) => {
+const Forms = ({}) => {
   const form = useRef();
   const handleSubmit = (e) => {
     e.preventDefault();
 
     emailjs
       .sendForm(
+        // service id where email admin connected to
         "service_8105qdh",
+        // template from email js
         "template_spq6kpf",
         form.current,
+        // public API key
         "mi4Bi2T_Bn0ve9enG"
       )
       .then(
