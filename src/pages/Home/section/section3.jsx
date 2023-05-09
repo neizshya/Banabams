@@ -17,6 +17,7 @@ const Section3 = () => {
     height: "22vw",
   };
   const [isLoading, setLoading] = useState(false);
+  // maps api
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBcj2ip9AhD5Q6MhtVMFREpApc6hBTmN9Y",
   });

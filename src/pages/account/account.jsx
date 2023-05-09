@@ -13,10 +13,7 @@ const Account = () => {
       <div className="container " style={{ marginBottom: "15vw" }}>
         <div className=" mt-5 border border-black border-3 rounded-4 ">
           <HeaderAccount />
-          {/* <Biodata />
-          <Address />
-          <Transaction />
-          <Payment /> */}
+
           <Outlet />
         </div>
       </div>

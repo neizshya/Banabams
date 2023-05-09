@@ -4,6 +4,7 @@ import Section2 from "./section/section2";
 import Section3 from "./section/section3";
 
 const Home = () => {
+  // home
   return (
     <>
       <div className="container">

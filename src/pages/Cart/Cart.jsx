@@ -33,7 +33,7 @@ const Cart = () => {
     firestoreid,
   } = useContext(UserContext);
   const navigate = useNavigate();
-
+  // handle increase quantity
   const increment = (i) => {
     const temp = i;
 
@@ -45,6 +45,8 @@ const Cart = () => {
       { ...temp, quantity: temp.quantity + 1 },
     ]);
   };
+  // handle decrease quantity
+
   const decrement = (i) => {
     const temp = i;
     const temparray = totalChoosenMenu;

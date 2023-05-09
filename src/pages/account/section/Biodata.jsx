@@ -32,7 +32,7 @@ const Biodata = () => {
       backgroundImage: `url(${bg})`,
     },
   };
-
+  // handle submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -46,6 +46,7 @@ const Biodata = () => {
 
     setModalShow(!modalshow);
   };
+  // fetching data with create collection if not exist
   const fetchingdata = async () => {
     const q = query(collection(firestore, "users"));
     const snapshot = onSnapshot(q, (querySnapshot) => {

@@ -8,9 +8,7 @@ import { firestore } from "../../../firebase/config";
 const Transaction = () => {
   const { quantity, history, firestoreid, setHistory } =
     useContext(UserContext);
-  // const leftsided = (
-
-  // );
+  // fetch data history transaction
   const fetchingdata = async () => {
     const q = query(
       collection(firestore, `history/${firestoreid}/historytransactions/`)

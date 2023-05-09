@@ -43,6 +43,7 @@ const Address = () => {
       backgroundImage: `url(${bg})`,
     },
   };
+  // handle add address
   const handleAddAddress = async (e) => {
     e.preventDefault();
     await addDoc(querycollection, {
@@ -54,11 +55,11 @@ const Address = () => {
     setAddress("");
     setModalShow(false);
   };
-
+  // handle delete address
   const handleDelete = async (id) => {
     await deleteDoc(doc(firestore, `address/${biodata.id}/listaddress/`, id));
   };
-
+  // handle update address
   const handleUpdate = async (id) => {
     id.preventDefault();
     await updateDoc(

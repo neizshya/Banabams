@@ -3,7 +3,6 @@ import { UserContext } from "../../../context/Context";
 import mastercard from "../../../assets/mastercard.svg";
 import bni from "../../../assets/bni.svg";
 const Payment = () => {
-  const { user, name, userid } = useContext(UserContext);
   return (
     <>
       <div className="row container mt-3 mb-3 ms-5" sty>

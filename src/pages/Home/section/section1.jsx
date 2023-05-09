@@ -1,5 +1,6 @@
 import sideimages from "../../../assets/section1.svg";
 const Section1 = () => {
+  // section welcome
   return (
     <>
       <div className="row">

@@ -48,7 +48,7 @@ const Section2 = () => {
     setTotalChoosenMenu,
     user,
   } = useContext(UserContext);
-
+  // handle sign in
   const handleGoogleSignIn = async () => {
     try {
       await GoogleSignIn();
