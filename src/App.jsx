@@ -161,6 +161,7 @@ function App() {
           setBiodata,
           firestoreid,
         }}>
+        {console.log(firestoreid)}
         <BrowserRouter>
           <Header />
           <Routes>
