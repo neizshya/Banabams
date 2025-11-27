@@ -1,10 +1,12 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+// import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { ModalProvider } from "react-modal-hook";
+// main
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ModalProvider>
     <App />
-  </React.StrictMode>,
-)
+  </ModalProvider>
+);
