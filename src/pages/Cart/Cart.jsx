@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import icon from "../../assets/arrowlocation.svg";
 import Footer from "../../components/Footer";
 import { Button, Card } from "react-bootstrap";
@@ -12,7 +12,6 @@ import minus from "../../assets/minus.svg";
 import { useNavigate } from "react-router-dom";
 import { uid } from "uid";
 import moment from "moment";
-import { useEffect } from "react";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { firestore } from "../../firebase/config";
 const Cart = () => {
