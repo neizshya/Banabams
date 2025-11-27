@@ -1,8 +1,7 @@
 import trash from "../assets/trash.svg";
 import plus from "../assets/plus.svg";
 import minus from "../assets/minus.svg";
-import { useContext } from "react";
-import { UserContext } from "../context/Context";
+import React from "react";
 const Cards = ({
   setTotal,
   total,
@@ -18,29 +17,27 @@ const Cards = ({
     <>
       <div
         className="card shadow rounded-4"
-        style={{ width: width, height: height }}>
+        style={{ width: width, height: height }}
+      >
         <div className="card-body">
           {special}
-          {/* <p className="card-text">
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </p> */}
           <div className="row">
-            <div className="col-2">
+            <div className="col-12 col-sm-2">
               <img
-                className="border mt-2 p-3 shadow rounded-3"
+                className="border mt-2 p-2 p-md-3 shadow rounded-3 img-fluid"
                 src={img}
                 alt=""
-                style={{ width: "4.5vw", backgroundColor: "#FEF7CB" }}
+                loading="lazy"
+                style={{ maxWidth: "80px", backgroundColor: "#FEF7CB" }}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <div className="row">
                 <div className="col-12">
-                  <p className="fs-4 fw-semibold">{menuName}</p>
+                  <p className="fs-5 fs-md-4 fw-semibold">{menuName}</p>
                 </div>
                 <div className="col-12">
-                  <p className="fs-4 fw-semibold">{price}</p>
+                  <p className="fs-5 fs-md-4 fw-semibold">{price}</p>
                 </div>
               </div>
             </div>
@@ -52,4 +49,4 @@ const Cards = ({
   );
 };
 
-export default Cards;
+export default React.memo(Cards);

@@ -4,9 +4,10 @@ import Button from "react-bootstrap/Button";
 import { Alert } from "bootstrap";
 import loader from "./assets/banana.gif";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import Cart from "./pages/Cart/Cart";
-import Account from "./pages/account/account";
+import { Suspense, lazy } from "react";
+const Home = lazy(() => import("./pages/Home/Home"));
+const Cart = lazy(() => import("./pages/Cart/Cart"));
+const Account = lazy(() => import("./pages/account/account"));
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { UserContext } from "./context/Context";
@@ -19,13 +20,13 @@ import {
 } from "firebase/auth";
 import { auth, firestore } from "./firebase/config";
 import PrivateRoute from "./components/privateRoute";
-import Biodata from "./pages/account/section/Biodata";
-import Address from "./pages/account/section/Address";
-import Transaction from "./pages/account/section/Transaction";
-import Payment from "./pages/account/section/Payment";
+const Biodata = lazy(() => import("./pages/account/section/Biodata"));
+const Address = lazy(() => import("./pages/account/section/Address"));
+const Transaction = lazy(() => import("./pages/account/section/Transaction"));
+const Payment = lazy(() => import("./pages/account/section/Payment"));
 import { setUserId } from "firebase/analytics";
 import { ToastContainer } from "react-toastify";
-import { collection, getDocs, onSnapshot, query } from "@firebase/firestore";
+import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 
 function App() {
   const [menu, setMenu] = useState([]);
@@ -162,22 +163,27 @@ function App() {
           biodata,
           setBiodata,
           firestoreid,
-        }}>
-        {console.log(firestoreid)}
+        }}
+      >
         <BrowserRouter>
           <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route element={<PrivateRoute />}>
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/account" element={<Account />}>
-                <Route path="/account/biodata" element={<Biodata />} />
-                <Route path="/account/address" element={<Address />} />
-                <Route path="/account/transaction" element={<Transaction />} />
-                <Route path="/account/payment" element={<Payment />} />
+          <Suspense fallback={<div className="container py-5">Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/account" element={<Account />}>
+                  <Route path="/account/biodata" element={<Biodata />} />
+                  <Route path="/account/address" element={<Address />} />
+                  <Route
+                    path="/account/transaction"
+                    element={<Transaction />}
+                  />
+                  <Route path="/account/payment" element={<Payment />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
+            </Routes>
+          </Suspense>
           <Footer />
         </BrowserRouter>
       </UserContext.Provider>

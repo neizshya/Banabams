@@ -3,33 +3,33 @@ import user from "../assets/testimoniuser.svg";
 const Cardview = ({ name, message }) => {
   return (
     <>
-      <div className="row" style={{ margin: "0 auto" }}>
-        <div className="col" style={{ marginLeft: "2vw" }}>
+      <div className="row mx-auto">
+        <div className="col-12">
           <div
             className="card rounded-5"
             style={{
-              height: "14.1vw",
+              minHeight: "200px",
               backgroundColor: "rgba(254, 191, 0, 1)",
-            }}>
-            <div className="row">
-              <div className="col-3">
-                {/* style={{}} */}
+            }}
+          >
+            <div className="row g-0">
+              <div className="col-12 col-md-3">
                 <div
-                  className="card rounded-5 p-5 "
+                  className="card rounded-5 p-3 p-md-5 m-3"
                   style={{
                     backgroundColor: "#FEF7CB",
-                    width: "13vw",
-                    left: "-2em",
-                    top: "-0.025em",
-                  }}>
+                    position: "relative",
+                  }}
+                >
                   <img
                     src={user}
                     alt=""
-                    style={{ width: "8vw", margin: "0 auto" }}
+                    className="img-fluid"
+                    style={{ maxWidth: "120px", margin: "0 auto" }}
                   />
                 </div>
               </div>
-              <div className="col-7">
+              <div className="col-12 col-md-7">
                 <div className="card-body">
                   <h1 className="card-title fw-bold">{name}</h1>
                   <p className="card-text fs-5">{message}</p>

@@ -1,3 +1,4 @@
+import React from "react";
 import trash from "../assets/trash.svg";
 
 const AddressCard = ({
@@ -14,14 +15,14 @@ const AddressCard = ({
       <div
         className="card shadow rounded-4 mb-3"
         style={{
-          //   width: "45vw",
           border: "1px solid brown",
-        }}>
+        }}
+      >
         <div className="card-body">
           <div className="row">
-            <div className="col-8">
-              <div className="row ">
-                <div className="col-12 ">
+            <div className="col-12 col-md-8 mb-3 mb-md-0">
+              <div className="row">
+                <div className="col-12">
                   <p className="text-secondary">{nickaddress}</p>
                 </div>
                 <div className="col-12">
@@ -30,23 +31,29 @@ const AddressCard = ({
                 <div className="col-12">
                   <p>{phone}</p>
                 </div>
-                <div className="col-7">
+                <div className="col-12">
                   <p>{fulladdress}</p>
                 </div>
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-12 col-md-4 text-center text-md-end">
               <button
-                className="btn bg-warning "
-                style={{ marginLeft: "5vw" }}
-                onClick={showmodal}>
+                className="btn bg-warning mb-2 mb-md-0"
+                onClick={showmodal}
+              >
                 Ubah Alamat
               </button>
               <button
-                className="btn"
-                style={{ marginTop: "6vw", marginLeft: "9.5vw" }}
-                onClick={handledelete}>
-                <img src={trash} style={{ width: "1.5vw" }} />
+                className="btn d-block d-md-inline ms-md-2"
+                onClick={handledelete}
+              >
+                <img
+                  src={trash}
+                  className="img-fluid"
+                  style={{ maxWidth: "24px" }}
+                  alt="hapus"
+                  loading="lazy"
+                />
               </button>
             </div>
           </div>
@@ -55,4 +62,4 @@ const AddressCard = ({
     </>
   );
 };
-export default AddressCard;
+export default React.memo(AddressCard);

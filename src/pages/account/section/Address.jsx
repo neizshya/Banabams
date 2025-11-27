@@ -6,15 +6,14 @@ import {
   onSnapshot,
   query,
   updateDoc,
-} from "@firebase/firestore";
+} from "firebase/firestore";
 import AddressCard from "../../../components/AddressCard";
 import { firestore } from "../../../firebase/config";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/Context";
-import { useState } from "react";
 import ReactModal from "react-modal";
+import { MODAL_STYLES } from "../../../constants/styles";
 import bg from "../../../assets/bg-modal.svg";
-import { useEffect } from "react";
 
 const Address = () => {
   const { firestoreid, biodata } = useContext(UserContext);
@@ -28,18 +27,11 @@ const Address = () => {
     firestore,
     `address/${biodata.id}/listaddress`
   );
+
   const customStyles = {
-    overlay: {
-      zIndex: 9999999,
-      backgroundColor: "rgba(0, 0, 0, 0.25)",
-    },
+    ...MODAL_STYLES,
     content: {
-      zIndex: 1000,
-      boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
-      width: "30vw",
-      height: "28vw",
-      top: "25%",
-      left: "35%",
+      ...MODAL_STYLES.content,
       backgroundImage: `url(${bg})`,
     },
   };
@@ -89,7 +81,7 @@ const Address = () => {
   }, []);
   return (
     <>
-      <div className="container mb-5 mt-3" style={{ marginLeft: "4vw" }}>
+      <div className="container">
         <div className="row">
           <div className="col-12 mb-4 text-end">
             <button
@@ -97,36 +89,34 @@ const Address = () => {
               style={{ marginRight: "5vw" }}
               onClick={(e) => {
                 setModalShow(!modalshow);
-              }}>
+              }}
+            >
               Tambah Alamat Baru
             </button>
           </div>
           {listAddress?.map((e, index) => (
-            <>
-              <div className="col-8">
-                <AddressCard
-                  key={index}
-                  nickaddress={e.nickaddress}
-                  receiver={e.receiver}
-                  phone={e.phone}
-                  fulladdress={e.fulladdress}
-                  handledelete={() => {
-                    handleDelete(e.id);
-                  }}
-                  showmodal={() => {
-                    setAddress({
-                      nickaddress: e.nickaddress,
-                      receiver: e.receiver,
-                      phone: e.phone,
-                      fulladdress: e.fulladdress,
-                    });
+            <div key={e.id || index} className="col-12 col-lg-8 mx-auto mb-3">
+              <AddressCard
+                nickaddress={e.nickaddress}
+                receiver={e.receiver}
+                phone={e.phone}
+                fulladdress={e.fulladdress}
+                handledelete={() => {
+                  handleDelete(e.id);
+                }}
+                showmodal={() => {
+                  setAddress({
+                    nickaddress: e.nickaddress,
+                    receiver: e.receiver,
+                    phone: e.phone,
+                    fulladdress: e.fulladdress,
+                  });
 
-                    setAddressId(e.id);
-                    setModalShowUpdate(!modalshowUpdate);
-                  }}
-                />
-              </div>
-            </>
+                  setAddressId(e.id);
+                  setModalShowUpdate(!modalshowUpdate);
+                }}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -135,7 +125,8 @@ const Address = () => {
         isOpen={modalshow}
         onRequestClose={() => setModalShow(false)}
         style={customStyles}
-        contentLabel="Example Modal">
+        contentLabel="Example Modal"
+      >
         {/* <p>{choosenItem.menu}</p> */}
         <p className="fw-bold fs-3">Data Disimpan</p>
         <form onSubmit={handleAddAddress}>
@@ -147,7 +138,7 @@ const Address = () => {
             </div>
             <div className="col-12">
               <input
-                value={address.nickaddress}
+                value={address.nickaddress || ""}
                 type="text"
                 className="form-control"
                 id="nickaddress"
@@ -168,7 +159,7 @@ const Address = () => {
                 className="form-control"
                 id="receiver"
                 required
-                value={address.receiver}
+                value={address.receiver || ""}
                 onChange={(e) =>
                   setAddress({ ...address, receiver: e.target.value })
                 }
@@ -185,7 +176,7 @@ const Address = () => {
                 className="form-control"
                 required
                 id="phone"
-                value={address.phone}
+                value={address.phone || ""}
                 onChange={(e) =>
                   setAddress({ ...address, phone: e.target.value })
                 }
@@ -200,7 +191,7 @@ const Address = () => {
               <input
                 type="text"
                 className="form-control"
-                value={address.fulladdress}
+                value={address.fulladdress || ""}
                 required
                 id="fulladdress"
                 onChange={(e) =>
@@ -219,7 +210,8 @@ const Address = () => {
             // setIsLoggedIn(true);
             setAddress("");
             setModalShow(false);
-          }}>
+          }}
+        >
           Tutup
         </button>
       </ReactModal>
@@ -229,7 +221,8 @@ const Address = () => {
         isOpen={modalshowUpdate}
         onRequestClose={() => setModalShowUpdate(false)}
         style={customStyles}
-        contentLabel="Example Modal">
+        contentLabel="Example Modal"
+      >
         {/* <p>{choosenItem.menu}</p> */}
         <p className="fw-bold fs-3">Data Disimpan</p>
         <form onSubmit={handleUpdate}>
@@ -244,7 +237,7 @@ const Address = () => {
                 type="text"
                 className="form-control"
                 id="nickaddress"
-                value={address.nickaddress}
+                value={address.nickaddress || ""}
                 onChange={(e) =>
                   setAddress({ ...address, nickaddress: e.target.value })
                 }
@@ -262,7 +255,7 @@ const Address = () => {
                 className="form-control"
                 id="receiver"
                 required
-                value={address.receiver}
+                value={address.receiver || ""}
                 onChange={(e) =>
                   setAddress({ ...address, receiver: e.target.value })
                 }
@@ -277,7 +270,7 @@ const Address = () => {
               <input
                 type="text"
                 className="form-control"
-                value={address.phone}
+                value={address.phone || ""}
                 required
                 id="phone"
                 onChange={(e) =>
@@ -296,7 +289,7 @@ const Address = () => {
                 className="form-control"
                 required
                 id="fulladdress"
-                value={address.fulladdress}
+                value={address.fulladdress || ""}
                 onChange={(e) =>
                   setAddress({ ...address, fulladdress: e.target.value })
                 }
@@ -313,7 +306,8 @@ const Address = () => {
             // setIsLoggedIn(true);
             setModalShowUpdate(false);
             setAddress("");
-          }}>
+          }}
+        >
           Tutup
         </button>
       </ReactModal>

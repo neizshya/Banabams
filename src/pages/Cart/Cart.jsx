@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import icon from "../../assets/arrowlocation.svg";
 import Footer from "../../components/Footer";
 import { Button, Card } from "react-bootstrap";
 import Cards from "../../components/CartCard";
-import { useContext } from "react";
 import { UserContext } from "../../context/Context";
+import { COLORS } from "../../constants/styles";
 
 import trash from "../../assets/trash.svg";
 import plus from "../../assets/plus.svg";
@@ -34,43 +34,39 @@ const Cart = () => {
   } = useContext(UserContext);
   const navigate = useNavigate();
   // handle increase quantity
-  const increment = (i) => {
-    const temp = i;
-    const temparray = totalChoosenMenu;
-    const searchindex = temparray.findIndex((e) => e.id === i.id);
-    temparray.splice(searchindex, 1);
-    setTotalChoosenMenu([
-      ...temparray,
-      { ...temp, quantity: temp.quantity + 1 },
-    ]);
+  const increment = (item) => {
+    setTotalChoosenMenu(
+      totalChoosenMenu.map((cartItem) =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      )
+    );
   };
-  // handle decrease quantity
 
-  const decrement = (i) => {
-    const temp = i;
-    const temparray = totalChoosenMenu;
-    const searchindex = temparray.findIndex((e) => e.id === i.id);
-    temparray.splice(searchindex, 1);
-    if (temp.quantity <= 1) {
-      setTotalChoosenMenu([...temparray]);
+  // handle decrease quantity
+  const decrement = (item) => {
+    if (item.quantity <= 1) {
+      // Remove item if quantity would go below 1
+      deleteData(item);
     } else {
-      setTotalChoosenMenu([
-        ...temparray,
-        {
-          ...temp,
-          quantity: temp.quantity - 1,
-          actualprice: temp.actualprice,
-        },
-      ]);
+      setTotalChoosenMenu(
+        totalChoosenMenu.map((cartItem) =>
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity - 1 }
+            : cartItem
+        )
+      );
     }
   };
-  const deleteData = (i) => {
-    const temparray = totalChoosenMenu;
-    const searchindex = temparray.findIndex((e) => e.id === i.id);
-    temparray.splice(searchindex, 1);
-    setTotalChoosenMenu([...temparray]);
-    // const test = totalChoosenMenu.filter((e) => e.index !== index);
-    // totalChoosenMenu.splice(index, 1);
+
+  const deleteData = (item) => {
+    console.log("Deleting item:", item);
+    const updatedCart = totalChoosenMenu.filter(
+      (cartItem) => cartItem.id !== item.id
+    );
+    console.log("Updated cart:", updatedCart);
+    setTotalChoosenMenu(updatedCart);
   };
   // accumulate total price base on totalChoosenMenu quantity
   const accumulateTotalPrice = (items) => {
@@ -81,20 +77,33 @@ const Cart = () => {
 
   const handleOnclick = async (e) => {
     e.preventDefault();
-    if (totalChoosenMenu.length > 0) {
+
+    if (!totalChoosenMenu || totalChoosenMenu.length === 0) {
+      alert("Keranjang kosong! Silakan tambahkan menu terlebih dahulu.");
+      return;
+    }
+
+    try {
       await addDoc(
         collection(firestore, `history/${firestoreid}/historytransactions/`),
         {
           id: firestoreid,
           uid: uid(),
           data: totalChoosenMenu,
+          totalAmount: accumulateTotalPrice(totalChoosenMenu),
           date: moment().format("DD/MM/YYYY"),
+          timestamp: moment().valueOf(),
         }
       );
+
+      // Clear cart after successful checkout
       setTotalChoosenMenu([]);
+
+      // Navigate to transaction history
       navigate("/account/transaction");
-    } else {
-      alert("masukan menu ke keranjang");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Terjadi kesalahan saat checkout. Silakan coba lagi.");
     }
   };
 
@@ -104,13 +113,17 @@ const Cart = () => {
         <div className="row">
           <div className="col-12">
             <div className="row">
-              <div className="col-8">
+              <div className="col-12 col-lg-8">
                 <h1 className="fs-1 fw-semibold mt-5">Keranjang</h1>
               </div>
-              <div className="col-4 mt-4">
+              <div className="col-12 col-lg-4 mt-4">
                 <div
                   className="p-4 rounded-5 "
-                  style={{ border: "1px solid #773B30", color: "#773B30" }}>
+                  style={{
+                    border: `1px solid ${COLORS.brown}`,
+                    color: COLORS.brown,
+                  }}
+                >
                   <div className="row">
                     <div className="col-6">
                       <p className="fs-4 mt-2">
@@ -122,7 +135,8 @@ const Cart = () => {
                         className="btn btn-warning w-75 mt-2"
                         onClick={() => {
                           setDelivery(!delivery);
-                        }}>
+                        }}
+                      >
                         GANTI
                       </button>
                     </div>
@@ -131,34 +145,30 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          <div className="col-8">
-            <div className="row ms-1">
-              <div className="col-6 ">
-                <div className="row">
-                  <div className="col-1 mt-1 ">
-                    <input
-                      type="checkbox"
-                      name="pilih"
-                      id="pilih"
-                      style={{ transform: "scale(2)" }}
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label htmlFor="pilih" className="fw-semibold fs-4">
-                      Pilih Semua
-                    </label>
-                  </div>
+          <div className="col-12 col-lg-8 mb-4 mb-lg-0">
+            <div className="row align-items-center">
+              <div className="col-8 col-sm-6">
+                <div className="d-flex align-items-center gap-3">
+                  <input
+                    type="checkbox"
+                    name="pilih"
+                    id="pilih"
+                    style={{ transform: "scale(1.5)" }}
+                  />
+                  <label htmlFor="pilih" className="fw-semibold fs-5 mb-0">
+                    Pilih Semua
+                  </label>
                 </div>
               </div>
-              <div className="col-5 text-end">
-                <button className="btn fs-5" style={{ color: "#FEBF00" }}>
+              <div className="col-4 col-sm-6 text-end">
+                <button className="btn fs-5" style={{ color: COLORS.primary }}>
                   Hapus
                 </button>
               </div>
             </div>
           </div>
-          <div className="col-4 ">
-            <div className="row mt-4 ms-3">
+          <div className="col-12 col-lg-4 mb-4">
+            <div className="row mt-4">
               <div className="col-1">
                 <img src={icon} alt="" className=" " />
               </div>
@@ -170,95 +180,99 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          <div className="col-8">
-            <div className="row ms-1 mb-3">
-              <div className="col-6 ">
+          <div className="col-12 col-lg-8">
+            <div className="row mb-3">
+              <div className="col-12">
                 <div className="row">
                   {totalChoosenMenu?.length > 0 ? (
                     <>
                       <div className="row">
                         {totalChoosenMenu.map((e, index) => (
-                          <>
-                            <div className="row mb-3">
-                              <div className="col-1 mt-1 me-3">
-                                <input
-                                  type="checkbox"
-                                  name="pilih"
-                                  id="pilih"
-                                  checked={e.isMenuChecked}
-                                  onClick={(e) => {}}
-                                  style={{ transform: "scale(2)" }}
-                                />
-                              </div>
-                              <div className="col-7 ">
-                                <Cards
-                                  height={"7vw"}
-                                  width={"45vw"}
-                                  leftSide={
-                                    <>
-                                      <div className="col-1">
-                                        <button
-                                          className="btn mt-3 "
-                                          style={{ marginLeft: "-2vw" }}
-                                          onClick={() => {
-                                            deleteData(e);
-                                            // buat delete index
-                                          }}>
-                                          <img
-                                            src={trash}
-                                            style={{ width: "2.5vw" }}
-                                          />
-                                        </button>
-                                      </div>
-                                      <div className="col-3 pt-2">
-                                        <div
-                                          className="border rounded-3 mt-3"
-                                          style={{
-                                            backgroundColor: "#FEF7CB",
-                                            width: "10vw",
-                                            height: "2.5vw",
-                                          }}>
-                                          <div className="row ">
-                                            <div className="col-4">
-                                              <button
-                                                className="btn"
-                                                onClick={() => {
-                                                  decrement(e);
-                                                }}>
-                                                <img src={minus} alt="" />
-                                              </button>
-                                            </div>
-                                            <div className="col-4 ">
-                                              <p className="fs-5 fw-semibold mt-1 ms-2">
-                                                {/* {total} */}
-                                                {e.quantity}
-                                              </p>
-                                            </div>
-                                            <div
-                                              className="col-4"
-                                              style={{ marginLeft: "-0.5vw" }}>
-                                              <button
-                                                className="btn"
-                                                onClick={() => {
-                                                  increment(e);
-                                                }}>
-                                                <img src={plus} alt="" />
-                                              </button>
-                                            </div>
+                          <div
+                            key={e.id || index}
+                            className="row mb-4 align-items-start"
+                          >
+                            <div className="col-auto">
+                              <input
+                                type="checkbox"
+                                name="pilih"
+                                id={`pilih-${index}`}
+                                style={{
+                                  transform: "scale(1.5)",
+                                  marginTop: "8px",
+                                }}
+                              />
+                            </div>
+                            <div className="col">
+                              <Cards
+                                height={"auto"}
+                                width={"100%"}
+                                leftSide={
+                                  <>
+                                    <div className="col-12 col-sm-1">
+                                      <button
+                                        className="btn mt-3"
+                                        onClick={() => {
+                                          deleteData(e);
+                                          // buat delete index
+                                        }}
+                                      >
+                                        <img
+                                          src={trash}
+                                          className="img-fluid"
+                                          style={{ maxWidth: "32px" }}
+                                        />
+                                      </button>
+                                    </div>
+                                    <div className="col-12 col-sm-3 pt-2">
+                                      <div
+                                        className="border rounded-3 mt-3"
+                                        style={{
+                                          backgroundColor: COLORS.cream,
+                                          width: "100%",
+                                          maxWidth: "180px",
+                                        }}
+                                      >
+                                        <div className="row ">
+                                          <div className="col-4">
+                                            <button
+                                              className="btn"
+                                              onClick={() => {
+                                                decrement(e);
+                                              }}
+                                            >
+                                              <img src={minus} alt="" />
+                                            </button>
+                                          </div>
+                                          <div className="col-4 ">
+                                            <p className="fs-5 fw-semibold mt-1 ms-2">
+                                              {/* {total} */}
+                                              {e.quantity}
+                                            </p>
+                                          </div>
+                                          <div className="col-4">
+                                            <button
+                                              className="btn"
+                                              onClick={() => {
+                                                increment(e);
+                                              }}
+                                            >
+                                              <img src={plus} alt="" />
+                                            </button>
                                           </div>
                                         </div>
                                       </div>
-                                    </>
-                                  }
-                                  price={`${e.quantity} x Rp ${e.actualprice}`}
-                                  img={e.img}
-                                  menuName={`${e.taste} (${
-                                    e.topping ? e.topping : ""
-                                  })`}
-                                />
-                              </div>
+                                    </div>
+                                  </>
+                                }
+                                price={`${e.quantity} x Rp ${e.actualprice}`}
+                                img={e.img}
+                                menuName={`${e.taste} (${
+                                  e.topping ? e.topping : ""
+                                })`}
+                              />
                             </div>
-                          </>
+                          </div>
                         ))}
                       </div>
                     </>
@@ -273,23 +287,15 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          <div className="col-4">
-            <div className="border rounded-3 shadow" style={{ height: "30vw" }}>
+          <div className="col-12 col-lg-4">
+            <div
+              className="border rounded-3 shadow"
+              style={{ minHeight: "400px" }}
+            >
               <div className="row container p-4">
                 <div className="col-12">
                   <p className="fs-4 fw-semibold">Ringkasan Belanja</p>
-                  <div
-                    style={{
-                      display: "block",
-                      marginBefore: "0.5em",
-                      marginAfter: "0.5em",
-                      overflow: "hidden",
-                      borderStyle: "inset",
-                      borderWidth: 1,
-                      width: "20vw",
-                    }}>
-                    {/* line */}
-                  </div>
+                  <hr style={{ borderTop: "1px solid #ccc" }} />
                 </div>
                 <div className="col-12 mt-4">
                   <p className="fs-5">
@@ -301,21 +307,10 @@ const Cart = () => {
                 <div className="col-12 mt-5"></div>
                 <div className="col-12 mt-5"></div>
                 <div className="col-12 mt-5">
-                  <div
-                    style={{
-                      display: "block",
-                      marginBefore: "0.5em",
-                      marginAfter: "0.5em",
-                      overflow: "hidden",
-                      borderStyle: "inset",
-                      borderWidth: 1,
-                      width: "20vw",
-                    }}>
-                    {/* line */}
-                  </div>
+                  <hr style={{ borderTop: "1px solid #ccc" }} />
                   <div className="row mt-3">
                     <div className="col-6">
-                      <p className="fs-5 fw-semibold">Total Harga ()</p>
+                      <p className="fs-5 fw-semibold">Total Harga</p>
                     </div>
                     <div className="col-6 text-end">
                       <p className="fs-5 fw-semibold">
@@ -324,11 +319,12 @@ const Cart = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 ">
+                <div className="col-12 text-center">
                   <button
                     onClick={handleOnclick}
-                    className="btn btn-warning w-75 ms-5"
-                    style={{ border: "1.5px solid brown" }}>
+                    className="btn btn-warning w-100"
+                    style={{ border: "1.5px solid brown", maxWidth: "300px" }}
+                  >
                     Bayar Sekarang
                   </button>
                 </div>

@@ -8,15 +8,15 @@ import {
 import { useContext, useEffect, useState } from "react";
 import Cardview from "../../../components/Card";
 import { UserContext } from "../../../context/Context";
-// import Loading from "../../../components/loader";
 import Loading from "./Loader";
 import { useModal } from "react-modal-hook";
 import ReactModal from "react-modal";
+import { MODAL_STYLES, COLORS } from "../../../constants/styles";
 import bg from "../../../assets/bg-modal.svg";
 import cancel from "../../../assets/cancel-icon.svg";
 import plus from "../../../assets/plus.svg";
 import minus from "../../../assets/minus.svg";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { uid } from "uid";
 
@@ -58,18 +58,11 @@ const Section2 = () => {
   };
   const navigate = useNavigate();
   const [choosenMenu, setChoosenMenu] = useState({});
+
   const customStyles = {
-    overlay: {
-      zIndex: 9999999,
-      backgroundColor: "rgba(0, 0, 0, 0.25)",
-    },
+    ...MODAL_STYLES,
     content: {
-      zIndex: 1000,
-      boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
-      width: "30vw",
-      height: "28vw",
-      top: "25%",
-      left: "35%",
+      ...MODAL_STYLES.content,
       backgroundImage: `url(${bg})`,
     },
   };
@@ -81,47 +74,66 @@ const Section2 = () => {
       index === position ? !item : item
     );
     setCheckedState(updatedCheckedState);
-    const totalPrice = updatedCheckedState.reduce(
-      (sum, currentState, index) => {
-        if (currentState === true) {
-          return sum + parseInt(topping[index].price);
-        }
-        return sum;
-      },
-      0
-    );
-    setTotalPrices({ total: totalPrice, topping: topping[position] });
+
+    // Calculate total topping price and collect all selected toppings
+    let totalToppingPrice = 0;
+    const selectedToppings = [];
+
+    updatedCheckedState.forEach((isChecked, index) => {
+      if (isChecked) {
+        totalToppingPrice += parseInt(topping[index].price);
+        selectedToppings.push(topping[index].taste);
+      }
+    });
+
+    setTotalPrices({
+      total: totalToppingPrice,
+      toppings: selectedToppings.join(", ") || "",
+    });
   };
   const increment = () => {
     setQuantity(quantity + 1);
   };
   const decrement = () => {
-    if (quantity > 0) {
+    if (quantity > 1) {
       setQuantity(quantity - 1);
     }
   };
   const handleClickModal = (e) => {
+    if (quantity < 1) {
+      alert("Jumlah minimal 1");
+      return;
+    }
+
     setTotalChoosenMenu([
       ...totalChoosenMenu,
       {
         ...choosenMenu,
         quantity: quantity,
-        topping: totalPrices.topping.taste ? totalPrices.topping.taste : "",
-
+        topping: totalPrices.toppings || "",
         actualprice: totalPrices.total + parseInt(choosenMenu.price),
         isMenuAdded: true,
         isMenuChecked: true,
         id: uid(),
       },
     ]);
-    setModalShow(!modalShow);
+
+    // Reset modal state
+    setModalShow(false);
+    setQuantity(1);
+    setCheckedState(new Array(topping.length).fill(false));
+    setTotalPrices({ total: 0, toppings: "" });
+
     navigate("/cart");
   };
   const toppingView = (
     <>
-      {topping.map((item) => (
-        <div className="col-3">
-          <Card className="shadow " style={{ height: "20vw", width: "15vw" }}>
+      {topping.map((item, index) => (
+        <div
+          key={`topping-${index}`}
+          className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3"
+        >
+          <Card className="shadow h-100" style={{ width: "100%" }}>
             <Card.Img
               className="pt-3"
               variant="top"
@@ -145,12 +157,12 @@ const Section2 = () => {
   );
   const menuView = (
     <>
-      {menu.map((item) => (
-        <div className="col-3">
-          <Card
-            key={item.length}
-            className="shadow "
-            style={{ height: "20vw", width: "15vw" }}>
+      {menu.map((item, index) => (
+        <div
+          key={`menu-${index}`}
+          className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3"
+        >
+          <Card className="shadow h-100" style={{ width: "100%" }}>
             <Card.Img
               className="pt-3"
               variant="top"
@@ -194,8 +206,9 @@ const Section2 = () => {
                         setModalShow(!modalShow);
                       }
                       // showModal();
-                    }}>
-                    <img src={cart} alt="" style={{ width: "2vw" }} />
+                    }}
+                  >
+                    <img src={cart} alt="" style={{ width: "24px" }} />
                   </button>
                 </div>
               </div>
@@ -209,9 +222,10 @@ const Section2 = () => {
     <>
       <Carousel
         nextIcon={<IoIosArrowDroprightCircle size={"3em"} />}
-        prevIcon={<IoIosArrowDropleftCircle size={"3em"} />}>
-        {testimonials.map((e) => (
-          <Carousel.Item interval={4000}>
+        prevIcon={<IoIosArrowDropleftCircle size={"3em"} />}
+      >
+        {testimonials.map((e, index) => (
+          <Carousel.Item key={e.id || index} interval={4000}>
             <Cardview name={<>{e.name}</>} message={<>{e.message}</>} />
           </Carousel.Item>
         ))}
@@ -220,9 +234,9 @@ const Section2 = () => {
   );
 
   return (
-    <>
+    <div className="container">
       <p className="fs-1">Katalog Menu</p>
-      <div className="row mb-3" id="#menu">
+      <div className="row mb-3" id="menu">
         {isLoading ? <Loading /> : menuView}
       </div>
       <p className="fs-1">Aneka Topping</p>
@@ -231,13 +245,22 @@ const Section2 = () => {
       {isLoading ? <Loading /> : TestiView}
 
       {/* modal */}
-
-      {/* modal */}
       <ReactModal
         isOpen={modalShowNotLoggedIn}
         onRequestClose={() => setmodalShowNotLoggedIn(false)}
-        style={customStyles}
-        contentLabel="Example Modal">
+        style={{
+          overlay: { zIndex: 9999999, backgroundColor: "rgba(0, 0, 0, 0.25)" },
+          content: {
+            zIndex: 1000,
+            boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
+            width: "min(90vw, 500px)",
+            inset: "50% auto auto 50%",
+            transform: "translate(-50%, -50%)",
+            backgroundImage: `url(${bg})`,
+          },
+        }}
+        contentLabel="Example Modal"
+      >
         {/* <p>{choosenItem.menu}</p> */}
         <p className="fw-bold fs-3">Mohon Login Terlebih Dahulu</p>
         <button
@@ -246,124 +269,137 @@ const Section2 = () => {
             // setIsLoggedIn(true);
             handleGoogleSignIn();
             setmodalShowNotLoggedIn(!modalShowNotLoggedIn);
-          }}>
+          }}
+        >
           Login
         </button>
       </ReactModal>
       <ReactModal
         isOpen={modalShow}
         onRequestClose={() => setModalShow(false)}
-        style={customStyles}
-        contentLabel="Example Modal">
-        <div className="row container">
-          <div
-            className="col-3 bg-warning rounded-circle"
-            style={{ width: "6vw", height: "6vw" }}>
-            <img
-              src={choosenMenu.img}
-              alt=""
-              className="mt-3"
-              style={{ width: "4vw" }}
-            />
+        style={{
+          overlay: { zIndex: 9999999, backgroundColor: "rgba(0, 0, 0, 0.25)" },
+          content: {
+            zIndex: 1000,
+            boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
+            width: "min(90vw, 700px)",
+            inset: "50% auto auto 50%",
+            transform: "translate(-50%, -50%)",
+            backgroundImage: `url(${bg})`,
+          },
+        }}
+        contentLabel="Example Modal"
+      >
+        <div className="row g-3 p-3">
+          <div className="col-12">
+            <div className="row align-items-center">
+              <div className="col-auto">
+                <div
+                  className="bg-warning rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ width: "80px", height: "80px" }}
+                >
+                  <img
+                    src={choosenMenu.img}
+                    alt=""
+                    className="img-fluid"
+                    style={{ maxWidth: "55px" }}
+                  />
+                </div>
+              </div>
+              <div className="col">
+                <p className="fs-4 fw-semibold mb-0">{choosenMenu.taste}</p>
+              </div>
+              <div className="col-auto">
+                <button
+                  className="btn btn-sm"
+                  onClick={() => {
+                    setModalShow(false);
+                    setQuantity(1);
+                  }}
+                >
+                  <img src={cancel} alt="" style={{ width: "24px" }} />
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="col-8 mt-4">
-            <p className="fs-4 fw-semibold">{choosenMenu.taste}</p>
-          </div>
-          <div className="col-1">
-            <button
-              className="btn w-full"
-              onClick={() => {
-                setModalShow(false);
-                setQuantity(1);
-              }}>
-              <img src={cancel} alt="" />
-            </button>
-          </div>
-          <div className="col-4 mt-3">
-            <p className="fs-3 fw-medium">TOPPING</p>
-          </div>
-          <div className="col-8 ">
-            {/* topping checkbox */}
-            <div className="row">
+          <div className="col-12 mt-3">
+            <p className="fs-5 fw-semibold mb-3">TOPPING</p>
+            <div className="row g-3">
               {topping.map((item, index) => (
-                <div className="col-6 mt-3">
-                  <div className="row">
-                    <div className="col-1">
-                      <input
-                        style={{ transform: "scale(2)" }}
-                        type="checkbox"
-                        className="mt-3"
-                        name={item.value}
-                        value={item.price}
-                        id={`topping-${index}`}
-                        checked={checkedState[index]}
-                        onChange={() => {
-                          handleChangeInputMenuModal(index);
-                        }}
-                      />
-                    </div>
-                    <div className="col-2  mt-1">
-                      <label
-                        htmlFor={`topping-${index}`}
-                        className="fw-medium fs-4 ms-2">
-                        {item.taste}
-                      </label>
-                    </div>
+                <div key={`topping-modal-${index}`} className="col-6">
+                  <div className="d-flex align-items-center">
+                    <input
+                      style={{ transform: "scale(1.5)" }}
+                      type="checkbox"
+                      className="me-3"
+                      name={item.value}
+                      value={item.price}
+                      id={`topping-${index}`}
+                      checked={checkedState[index]}
+                      onChange={() => {
+                        handleChangeInputMenuModal(index);
+                      }}
+                    />
+                    <label
+                      htmlFor={`topping-${index}`}
+                      className="fw-medium mb-0"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.taste}
+                    </label>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="col-7 mt-5">
-            <p className="fs-5 fw-medium">Jumlah</p>
-          </div>
-          <div className="col-5 mt-4">
-            <div
-              className="border rounded-3 mt-3"
-              style={{
-                backgroundColor: "#FEF7CB",
-                width: "10vw",
-                height: "2.5vw",
-              }}>
-              <div className="row ">
-                <div className="col-4">
-                  <button className="btn" onClick={decrement}>
-                    <img src={minus} alt="" />
+          <div className="col-12 mt-3">
+            <div className="row align-items-center">
+              <div className="col-12 col-sm-auto mb-2 mb-sm-0">
+                <p className="fs-6 fw-medium mb-0">Jumlah</p>
+              </div>
+              <div className="col-12 col-sm-auto">
+                <div
+                  className="border rounded-3 d-inline-flex align-items-center"
+                  style={{
+                    backgroundColor: "#FEF7CB",
+                  }}
+                >
+                  <button className="btn btn-sm px-3" onClick={decrement}>
+                    <img src={minus} alt="-" style={{ width: "16px" }} />
                   </button>
-                </div>
-                <div className="col-4 ">
-                  <p className="fs-5 fw-semibold mt-1 ms-2">
-                    {quantity}
-                    {/* {quantity} */}
-                  </p>
-                </div>
-                <div className="col-4" style={{ marginLeft: "-0.5vw" }}>
-                  <button className="btn" onClick={increment}>
-                    <img src={plus} alt="" />
+                  <span className="fs-5 fw-semibold px-3">{quantity}</span>
+                  <button className="btn btn-sm px-3" onClick={increment}>
+                    <img src={plus} alt="+" style={{ width: "16px" }} />
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-7 mt-2">
-            <p className="fs-5 fw-medium">Total Harga</p>
+          <div className="col-12 mt-3">
+            <div className="row align-items-center">
+              <div className="col-auto">
+                <p className="fs-6 fw-medium mb-0">Total Harga</p>
+              </div>
+              <div className="col text-end">
+                <p className="fs-4 fw-bold mb-0" style={{ color: "#773B30" }}>
+                  Rp{" "}
+                  {(totalPrices.total + parseInt(choosenMenu.price)) * quantity}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="col-5 mt-1">
-            <p className="fs-4 fw-medium">
-              Rp {(totalPrices.total + parseInt(choosenMenu.price)) * quantity}
-            </p>
-          </div>
-          <div className="col-12 ">
+          <div className="col-12 mt-3">
             <button
               onClick={handleClickModal}
-              className="btn w-75 bg-white  "
-              style={{ border: "1px solid brown", marginLeft: "4vw" }}>
+              className="btn btn-warning w-100"
+              style={{ border: "2px solid #773B30" }}
+            >
               Masukan Keranjang
             </button>
           </div>
         </div>
       </ReactModal>
-    </>
+    </div>
   );
 };
 export default Section2;

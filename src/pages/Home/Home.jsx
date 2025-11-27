@@ -7,7 +7,7 @@ const Home = () => {
   // home
   return (
     <>
-      <div className="container">
+      <div className="container-fluid">
         <Section1 />
         <Section2 />
         <Section3 />

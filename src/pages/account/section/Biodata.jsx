@@ -1,37 +1,19 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/Context";
-import { useState } from "react";
 import {
-  addDoc,
   collection,
   doc,
   onSnapshot,
   query,
   setDoc,
   updateDoc,
-} from "@firebase/firestore";
+} from "firebase/firestore";
 import { firestore } from "../../../firebase/config";
-import ReactModal from "react-modal";
-import bg from "../../../assets/bg-modal.svg";
-import { useEffect } from "react";
+import Modal from "../../../components/Modal";
+import { BUTTON_STYLES } from "../../../constants/styles";
 const Biodata = () => {
   const { user, biodata, setBiodata, firestoreid } = useContext(UserContext);
   const [modalshow, setModalShow] = useState(false);
-  const customStyles = {
-    overlay: {
-      zIndex: 9999999,
-      backgroundColor: "rgba(0, 0, 0, 0.25)",
-    },
-    content: {
-      zIndex: 1000,
-      boxShadow: "9px 16px 18px 0px rgba(0,0,0,0.2)",
-      width: "30vw",
-      height: "28vw",
-      top: "25%",
-      left: "35%",
-      backgroundImage: `url(${bg})`,
-    },
-  };
   // handle submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,18 +65,18 @@ const Biodata = () => {
     <>
       {/* <p>Biodata</p>
       <img src={user?.photoURL} alt="" /> */}
-      <div className="container mb-5" style={{ marginLeft: "4vw" }}>
+      <div className="container mb-5">
         <form onSubmit={handleSubmit}>
           <div className="row mt-3">
-            <div className="col-4">
+            <div className="col-12 col-md-4 mb-3 mb-md-0">
               <img
-                style={{ width: "22vw" }}
+                style={{ width: "100%" }}
                 className="rounded-3"
                 src={user?.photoURL}
                 alt=""
               />
             </div>
-            <div className="col-4">
+            <div className="col-12 col-md-4 mb-3 mb-md-0">
               <div className="mb-2">
                 <p>Nama</p>
 
@@ -106,7 +88,7 @@ const Biodata = () => {
                 </label>
                 <input
                   type="date"
-                  value={biodata.date}
+                  value={biodata.date || ""}
                   onChange={(e) =>
                     // setDate(e.target.value)
                     setBiodata({ ...biodata, date: e.target.value })
@@ -181,43 +163,28 @@ const Biodata = () => {
                   onChange={(e) =>
                     setBiodata({ ...biodata, phone: e.target.value })
                   }
-                  value={biodata.phone}
+                  value={biodata.phone || ""}
                   required
                 />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-12 col-md-4 text-center text-md-end">
               <button
                 type="submit"
-                className="btn  w-25"
-                style={{
-                  backgroundColor: "#FEBF00",
-                  border: "2px solid rgba(119, 59, 48, 1)",
-                  marginTop: "28vw",
-                  marginLeft: "9vw",
-                }}>
+                className="btn mt-4"
+                style={BUTTON_STYLES.primary}
+              >
                 Simpan
               </button>
             </div>
           </div>
         </form>
       </div>
-      <ReactModal
+      <Modal
         isOpen={modalshow}
-        onRequestClose={() => setModalShow(false)}
-        style={customStyles}
-        contentLabel="Example Modal">
-        {/* <p>{choosenItem.menu}</p> */}
-        <p className="fw-bold fs-3">Data Disimpan</p>
-        <button
-          className="btn btn-warning"
-          onClick={() => {
-            // setIsLoggedIn(true);
-            setModalShow(false);
-          }}>
-          Tutup
-        </button>
-      </ReactModal>
+        onClose={() => setModalShow(false)}
+        title="Data Disimpan"
+      />
     </>
   );
 };
