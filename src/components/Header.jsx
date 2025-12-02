@@ -104,82 +104,101 @@ const Header = () => {
   };
   return (
     <>
-      <header className="px-1 pt-2 shadow sticky-top bg-white">
-        <ul className="nav nav-pills">
-          <div className="row  w-100">
-            <div className="col-12 col-lg-10 ">
-              <div className="row">
-                <div className="col-auto">
-                  <li className="nav-item">
-                    <NavLink to={"/"} className="d-flex align-items-center">
-                      <img className="w-75" src={logo} alt="" />
-                    </NavLink>
-                  </li>
-                </div>
-                <div className="col-1">
-                  <li className="nav-item">
-                    <button
-                      onClick={() => scrollToSection("menu")}
-                      className="nav-link px-2 text-dark fs-5 bg-transparent border-0"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Menu
-                    </button>
-                  </li>
-                </div>
-                <div className="col-1">
-                  <li className="nav-item">
-                    <button
-                      onClick={() => scrollToSection("kontak")}
-                      className="nav-link px-2 text-dark fs-5 bg-transparent border-0"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Kontak
-                    </button>
-                  </li>
-                </div>
-              </div>
+      <header className="shadow sticky-top bg-white">
+        <div className="container-fluid px-3 py-2">
+          <div className="row align-items-center">
+            <div className="col-4 col-md-2">
+              <NavLink to={"/"}>
+                <img
+                  className="img-fluid"
+                  src={logo}
+                  alt="Banabams"
+                  style={{ maxWidth: "50%", height: "auto" }}
+                />
+              </NavLink>
             </div>
-            <div className="col-12 col-lg-2 d-flex align-items-start mt-2 mt-lg-0">
-              <div className="row ">
-                <div className="col-4">
-                  <li className="nav-item">
-                    <img className="img-fluid" src={notif} alt="" />
-                  </li>
-                </div>
-                <div className="col-4">
-                  <NavLink to={"/cart"} className="d-flex align-items-center">
-                    <li className="nav-item">
-                      <img className="img-fluid" src={cart} alt="" />
-                    </li>
-                  </NavLink>
-                </div>
-                <div className="col-4">
-                  <li className="nav-item">
-                    {user ? (
-                      <img
-                        className="img-fluid"
-                        src={users}
-                        alt="User Account"
-                        onClick={showModal}
-                        style={{ cursor: "pointer" }}
-                      />
-                    ) : (
-                      <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => {
-                          handleGoogleSignIn();
-                        }}
-                      >
-                        Login
-                      </button>
-                    )}
-                  </li>
-                </div>
+
+            <div className="col-md-7 d-none d-md-flex justify-content-center gap-4">
+              <button
+                onClick={() => scrollToSection("menu")}
+                className="btn btn-link text-decoration-none text-dark fw-semibold"
+                style={{ cursor: "pointer", fontSize: "1rem" }}
+              >
+                Menu
+              </button>
+              <button
+                onClick={() => scrollToSection("kontak")}
+                className="btn btn-link text-decoration-none text-dark fw-semibold"
+                style={{ cursor: "pointer", fontSize: "1rem" }}
+              >
+                Kontak
+              </button>
+            </div>
+
+            <div className="col-8 col-md-3">
+              <div className="d-flex align-items-center justify-content-end gap-3">
+                <button className="btn btn-link p-1 border-0 bg-transparent d-none d-md-inline">
+                  <img
+                    src={notif}
+                    alt="Notifikasi"
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </button>
+                <NavLink to={"/cart"} className="btn btn-link p-1 border-0">
+                  <img
+                    src={cart}
+                    alt="Keranjang"
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </NavLink>
+                {user ? (
+                  <button
+                    className="btn btn-link p-1 border-0 bg-transparent"
+                    onClick={showModal}
+                  >
+                    <img
+                      src={users}
+                      alt="User Account"
+                      style={{
+                        cursor: "pointer",
+                        width: "20px",
+                        height: "20px",
+                      }}
+                    />
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-warning btn-sm px-3 py-1"
+                    onClick={handleGoogleSignIn}
+                    style={{ fontSize: "0.875rem" }}
+                  >
+                    Login
+                  </button>
+                )}
               </div>
             </div>
           </div>
-        </ul>
+        </div>
+
+        {/* Mobile Navigation - Horizontal bar */}
+        <div className="d-md-none border-top">
+          <div className="d-flex justify-content-center gap-5 py-2">
+            <button
+              onClick={() => scrollToSection("menu")}
+              className="btn btn-link text-decoration-none text-dark fw-semibold p-1"
+              style={{ cursor: "pointer", fontSize: "0.9rem" }}
+            >
+              Menu
+            </button>
+            <button
+              onClick={() => scrollToSection("kontak")}
+              className="btn btn-link text-decoration-none text-dark fw-semibold p-1"
+              style={{ cursor: "pointer", fontSize: "0.9rem" }}
+            >
+              Kontak
+            </button>
+          </div>
+        </div>
       </header>
     </>
   );
